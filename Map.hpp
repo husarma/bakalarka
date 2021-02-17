@@ -30,4 +30,6 @@ public:
     std::string load_agents(std::string custom_agents_file_name = "");
     std::string reload();
     std::string make_output(std::string output_file_name);
+
+    std::string map_dump(std::string dump_file_name = "");
 };

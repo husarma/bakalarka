@@ -128,6 +128,7 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 }
 
 std::string Map::reload() {
+
 	auto ret_load_map = load_map();
 	auto ret_load_agents = load_agents();
 
@@ -143,6 +144,7 @@ std::string Map::reload() {
 }
 
 std::string Map::make_output(std::string output_file_name) {
+
 	std::ofstream ofile;
 	ofile.open(output_file_name);
 
@@ -207,6 +209,43 @@ std::string Map::make_output(std::string output_file_name) {
 	}
 
 	ofile.close();
+
+	return "OK";
+}
+
+std::string Map::map_dump(std::string dump_file_name) {
+
+	std::ofstream ofile;
+	if (dump_file_name != "") {
+		ofile.open(dump_file_name, std::ios::app); //open for writing to the end of file
+		if (!ofile.is_open()) {
+			return "ERROR: cannot open file for writing: " + dump_file_name + "\n";
+		}
+	}
+	else {
+		//setting ofile as std::cout
+		ofile.copyfmt(std::cout);
+		ofile.clear(std::cout.rdstate());
+		ofile.basic_ios<char>::rdbuf(std::cout.rdbuf());
+	}
+
+	ofile << std::endl;
+	ofile << "Map:" << std::endl;
+	for (size_t i = 0; i < height; i++) {
+		for (size_t j = 0; j < width; j++) {
+			if (map[i][j] != 0) {
+				ofile << ".";
+			}
+			else {
+				ofile << "#";
+			}
+		}
+		ofile << std::endl;
+	}
+
+	if (dump_file_name != "") {
+		ofile.close();
+	}
 
 	return "OK";
 }

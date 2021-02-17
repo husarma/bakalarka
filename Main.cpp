@@ -6,6 +6,7 @@ int main(int argc, char** argv) {
     Map mapa1 = Map(argv[1], argv[2]);
     mapa1.reload();
     mapa1.make_output("output1.txt");
+    mapa1.map_dump("output_dump.txt");
 
 
     Map mapa2 = Map(argv[1], argv[2]);
