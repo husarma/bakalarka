@@ -1,5 +1,7 @@
 #include "map.hpp"
 
+Map::Map() {}
+
 Map::Map(std::string map_file_name, std::string agents_file_name): 
 	map_file_name(map_file_name), 
 	agents_file_name(agents_file_name) 
@@ -13,11 +15,17 @@ void Map::set_agents_file(std::string new_agents_file_name) {
 	agents_file_name = new_agents_file_name;
 }
 
-int Map::load_map_and_agents() {
-	std::ifstream map_file(map_file_name);
-	std::ifstream agents_file(agents_file_name);
+std::string Map::load_map(std::string custom_map_file_name) {
 
-	if (map_file.is_open() && agents_file.is_open()) {
+	std::ifstream map_file;
+	if (custom_map_file_name != "") {
+		map_file = std::ifstream(custom_map_file_name);
+	}
+	else {
+		map_file = std::ifstream(map_file_name);
+	}
+
+	if (map_file.is_open()) {
 		std::string map_line;
 
 		std::getline(map_file, map_line); //first line is unnecessary
@@ -48,8 +56,32 @@ int Map::load_map_and_agents() {
 				}
 			}
 		}
+	}
+	else {
+		if (custom_map_file_name != "") {
+			return "ERROR: cannot open file for reading: " + custom_map_file_name + "\n";
+		}
+		else {
+			return "ERROR: cannot open file for reading: " + map_file_name + "\n";
+		}
+	}
 
-		
+	map_file.close();
+
+	return "OK";
+}
+
+std::string Map::load_agents(std::string custom_agents_file_name) {
+
+	std::ifstream agents_file;
+	if (custom_agents_file_name != "") {
+		agents_file = std::ifstream(custom_agents_file_name);
+	}
+	else {
+		agents_file = std::ifstream(agents_file_name);
+	}
+
+	if (agents_file.is_open()) {
 		std::string agents_line;
 		std::getline(agents_file, agents_line); //first line unimportent
 
@@ -78,79 +110,103 @@ int Map::load_map_and_agents() {
 				}
 			}
 
-			agents.push_back(std::make_pair(std::make_pair(asy, asx), std::make_pair(aey, aex)));
+		agents.push_back(std::make_pair(std::make_pair(asy, asx), std::make_pair(aey, aex)));
 		}
 	}
 	else {
-		return -1;
+		if (custom_agents_file_name != "") {
+			return "ERROR: cannot open file for reading: " + custom_agents_file_name + "\n";
+		}
+		else {
+			return "ERROR: cannot open file for reading: " + agents_file_name + "\n";
+		}
 	}
 
-	map_file.close();
 	agents_file.close();
 
-	return 0;
+	return "OK";
 }
 
-int Map::make_output(std::string output_file_name) {
+std::string Map::reload() {
+	auto ret_load_map = load_map();
+	auto ret_load_agents = load_agents();
+
+	std::string ret = "";
+	if (ret_load_map != "OK") {
+		ret += ret_load_map;
+	}
+	if (ret_load_agents != "OK") {
+		ret += ret_load_agents;
+	}
+
+	return ret;
+}
+
+std::string Map::make_output(std::string output_file_name) {
 	std::ofstream ofile;
 	ofile.open(output_file_name);
 
-	size_t vertex_number = 1;
+	if (ofile.is_open()) {
+		size_t vertex_number = 1;
 
-	ofile << "ins(Graph, As, Avoid, Makespan, SumOfCosts) =>" << std::endl;
-	ofile << "    Graph = [" << std::endl;
+		ofile << "ins(Graph, As, Avoid, Makespan, SumOfCosts) =>" << std::endl;
+		ofile << "    Graph = [" << std::endl;
 
-	for (size_t i = 1; i <= height + 1; i++) {
-		for (size_t j = 0; j < width; j++) {
-			if (map[i][j + 1] != 0 && i != height + 1) {
-				map[i][j + 1] = vertex_number;
-				vertex_number++;
-			}
-			if (i > 1) {
-				if (map[i - 1][j + 1] != 0) {
-					if (map[i - 1][j + 1] != 1) {
-						ofile << "," << std::endl;
+		for (size_t i = 1; i <= height + 1; i++) {
+			for (size_t j = 0; j < width; j++) {
+				if (map[i][j + 1] != 0 && i != height + 1) {
+					map[i][j + 1] = vertex_number;
+					vertex_number++;
+				}
+				if (i > 1) {
+					if (map[i - 1][j + 1] != 0) {
+						if (map[i - 1][j + 1] != 1) {
+							ofile << "," << std::endl;
+						}
+						ofile << "    $neibs(" << map[i - 1][j + 1] << ",[" << map[i - 1][j + 1];
+						if (map[i - 2][j + 1] != 0) {
+							ofile << "," << map[i - 2][j + 1];
+						}
+						if (map[i - 1][j + 2] != 0) {
+							ofile << "," << map[i - 1][j + 2];
+						}
+						if (map[i][j + 1] != 0) {
+							ofile << "," << map[i][j + 1];
+						}
+						if (map[i - 1][j] != 0) {
+							ofile << "," << map[i - 1][j];
+						}
+						ofile << "])";
 					}
-					ofile << "    $neibs(" << map[i - 1][j + 1] << ",[" << map[i - 1][j + 1];
-					if (map[i - 2][j + 1] != 0) {
-						ofile << "," << map[i - 2][j + 1];
-					}
-					if (map[i - 1][j + 2] != 0) {
-						ofile << "," << map[i - 1][j + 2];
-					}
-					if (map[i][j + 1] != 0) {
-						ofile << "," << map[i][j + 1];
-					}
-					if (map[i - 1][j] != 0) {
-						ofile << "," << map[i - 1][j];
-					}
-					ofile << "])";
 				}
 			}
 		}
-	}
 
-	ofile << std::endl;
-	ofile << "    ]," << std::endl;
-	ofile << "    As = [";
+		ofile << std::endl;
+		ofile << "    ]," << std::endl;
+		ofile << "    As = [";
 
-	for (size_t i = 0; i < agents.size(); i++) {
-		if (i != 0) {
-			ofile << ",";
+		for (size_t i = 0; i < agents.size(); i++) {
+			if (i != 0) {
+				ofile << ",";
+			}
+			int asy = agents[i].first.first;
+			int asx = agents[i].first.second;
+			int aey = agents[i].second.first;
+			int aex = agents[i].second.second;
+			ofile << "(" << map[asy][asx] << "," << map[aey][aex] << ")";
 		}
-		int asy = agents[i].first.first;
-		int asx = agents[i].first.second;
-		int aey = agents[i].second.first;
-		int aex = agents[i].second.second;
-		ofile << "(" << map[asy][asx] << "," << map[aey][aex] << ")";
-	}
 
-	ofile << "]," << std::endl;
-	ofile << "    Avoid = new_array(0,0)," << std::endl;
-	ofile << "    Makespan = -1," << std::endl;
-	ofile << "    SumOfCosts = -1." << std::endl;
+		ofile << "]," << std::endl;
+		ofile << "    Avoid = new_array(0,0)," << std::endl;
+		ofile << "    Makespan = -1," << std::endl;
+		ofile << "    SumOfCosts = -1." << std::endl;
+	}
+	else {
+		return "ERROR: cannot open file for writing: " + output_file_name + "\n";
+	}
 
 	ofile.close();
 
-	return 0;
+	return "OK";
 }

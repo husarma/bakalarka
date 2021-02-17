@@ -12,8 +12,8 @@ public:
     const size_t height_number_index = 7;
     const size_t width_number_index = 6;
 
-    std::string map_file_name;
-    std::string agents_file_name;
+    std::string map_file_name = "";
+    std::string agents_file_name = "";
 
     size_t height = 0;
     size_t width = 0;
@@ -26,6 +26,8 @@ public:
 
     void set_map_file(std::string new_map_file_name);
     void set_agents_file(std::string new_agents_file_name);
-    int load_map_and_agents();
-    int make_output(std::string output_file_name);
+    std::string load_map(std::string custom_map_file_name = "");
+    std::string load_agents(std::string custom_agents_file_name = "");
+    std::string reload();
+    std::string make_output(std::string output_file_name);
 };

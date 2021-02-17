@@ -1,5 +1,5 @@
 ✔❌
 1. orezavanie a skusanie na pomalom programe
 ✔	15:54 17. 2. 2021 rozdelenie nacitania a vypisu z rocnikoveho projektu a vytvorenie datovej struktury 2D mapy s ktorou budem robit orezavanie a z nej sa bude robit vypis pre picat 
-	16:10 17. 2. 2021 rozdelenie nacitania na samostatne load_map a load_agents
+✔	16:10 17. 2. 2021 rozdelenie nacitania na samostatne load_map a load_agents a pridanie funkcie reload a pridanie error hlasok
 	17:00 17. 2. 2021 vytvorenie debug funkcie, ktora mi bude vypisovat do konzole stav mapy a agentov
