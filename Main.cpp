@@ -12,7 +12,8 @@ int main(int argc, char** argv) {
 
     //time_expanded_multithread(mapa1.map, output_map, mapa1.agents);
 
-    auto a = shortest_path(mapa1.map, mapa1.agents[0]);
+    std::vector<std::vector<std::pair<size_t, size_t>>> output_paths(mapa1.agents.size());
+    shortest_path_multithread(mapa1.map, output_paths, mapa1.agents);
 
     map_dump(output_map, "output_dump.txt");
 

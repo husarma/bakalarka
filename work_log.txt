@@ -10,6 +10,7 @@
 	20:52 19. 2. 2021 podpora zjednotenia volnych vrcholov map
 	20:53 19. 2. 2021 podpora prieniku volnych vrcholov map
 ✔	20:54 19. 2. 2021 hladanie najkradsej cesty pre agenta
-	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najradsich ciet jednotlivych agentov
+✔	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najradsich ciet jednotlivych agentov
 	20:56 19. 2. 2021 obalovanie jakradsich ciest volnymi vrcholmi
 	20:56 19. 2. 2021 zjednotenie najkradsich ciest (ak sa nepretinaju tak je to optimalne riesenie)
+	21:59 19. 2. 2021 funkcia na vpisanie najkratsich ciest do grafu

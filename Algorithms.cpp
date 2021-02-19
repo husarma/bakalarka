@@ -100,7 +100,7 @@ void time_expanded(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 	}
 }
 
-void time_expanded_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents) {
+void time_expanded_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 	std::vector<std::thread> threads;
 
 	//Launch threads
@@ -112,10 +112,9 @@ void time_expanded_multithread(std::vector<std::vector<size_t>>& map_input, std:
 	for (auto& thread : threads) {
 		thread.join();
 	}
-
 }
 
-std::vector<std::pair<size_t, size_t>> shortest_path(std::vector<std::vector<size_t>>& map_input, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void shortest_path(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 	std::vector<std::vector<std::pair<size_t, size_t>>> temp_map(map_input.size(), std::vector<std::pair<size_t, size_t>>(map_input[0].size(), std::make_pair(0, 0)));
 
 	std::queue<std::pair<size_t, size_t>> vertex_queue;
@@ -155,15 +154,31 @@ std::vector<std::pair<size_t, size_t>> shortest_path(std::vector<std::vector<siz
 	}
 
 	//reproducting the path from start to finish
-	std::vector<std::pair<size_t, size_t>> return_path;
 	if (found) {
 		std::pair<size_t, size_t> current = agent.first;
-		return_path.push_back(std::make_pair(agent.first.first, agent.first.second));
+		output_paths[index_in_output].push_back(std::make_pair(agent.first.first, agent.first.second));
 		while (current.first != agent.second.first || current.second != agent.second.second) {
 			current = temp_map[current.first][current.second];
-			return_path.push_back(std::make_pair(current.first, current.second));
+			output_paths[index_in_output].push_back(std::make_pair(current.first, current.second));
 		}
 	}
+}
 
-	return return_path;
+void shortest_path_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+
+	if (output_paths.size() != agents.size()) {
+		std::cout << "ERROR: different lenghts of paths and agents \n";
+	}
+
+	std::vector<std::thread> threads;
+
+	//Launch threads
+	for (size_t i = 0; i < agents.size(); i++) {
+		threads.push_back(std::thread(shortest_path, std::ref(map_input), std::ref(output_paths), i, agents[i]));
+	}
+
+	//Join the threads with the main thread
+	for (auto& thread : threads) {
+		thread.join();
+	}
 }
