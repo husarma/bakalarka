@@ -3,7 +3,13 @@
 ✔	15:54 17. 2. 2021 rozdelenie nacitania a vypisu z rocnikoveho projektu a vytvorenie datovej struktury 2D mapy s ktorou budem robit orezavanie a z nej sa bude robit vypis pre picat 
 ✔	16:10 17. 2. 2021 rozdelenie nacitania na samostatne load_map a load_agents a pridanie funkcie reload a pridanie error hlasok
 ✔	17:00 17. 2. 2021 vytvorenie debug funkcie map_dump, ktora bude vypisovat do konzole alebo do zadaneho suboru stav mapy
-✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy
-✔	23:55 18. 2. 2021 podpora multithreadingu pre BFS - pre kazdeho agenta jedno vlakno
-✔	13:51 19. 2. 2021 zrychlenie funkcie BFS
-✔	16:49 19. 2. 2021 opravenie memory bug v BFS
+✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy, casovo expandovany graf
+✔	23:55 18. 2. 2021 podpora multithreadingu pre casovo expandovany graf - pre kazdeho agenta jedno vlakno
+✔	13:51 19. 2. 2021 zrychlenie funkcie casovo expandovany graf
+✔	16:49 19. 2. 2021 opravenie memory bug v casovo expandovany graf
+	20:52 19. 2. 2021 podpora zjednotenia volnych vrcholov map
+	20:53 19. 2. 2021 podpora prieniku volnych vrcholov map
+✔	20:54 19. 2. 2021 hladanie najkradsej cesty pre agenta
+	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najradsich ciet jednotlivych agentov
+	20:56 19. 2. 2021 obalovanie jakradsich ciest volnymi vrcholmi
+	20:56 19. 2. 2021 zjednotenie najkradsich ciest (ak sa nepretinaju tak je to optimalne riesenie)
