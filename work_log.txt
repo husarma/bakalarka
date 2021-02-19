@@ -6,3 +6,4 @@
 ✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy
 ✔	23:55 18. 2. 2021 podpora multithreadingu pre BFS - pre kazdeho agenta jedno vlakno
 ✔	13:51 19. 2. 2021 zrychlenie funkcie BFS
+✔	16:49 19. 2. 2021 opravenie memory bug v BFS

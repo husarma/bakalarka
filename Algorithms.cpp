@@ -22,24 +22,29 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 				found = true;
 			}
 
-			temp_map[a.first][a.second] = 2;
+			//temp_map[a.first][a.second] = 2;
 
 			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 2) {
+				temp_map[a.first - 1][a.second] = 2;
 				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
 			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] != 2) {
+				temp_map[a.first][a.second + 1] = 2;
 				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
 			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] != 2) {
+				temp_map[a.first + 1][a.second] = 2;
 				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
 			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] != 2) {
+				temp_map[a.first][a.second - 1] = 2;
 				vertex_queue.push(std::make_pair(a.first, a.second - 1));
 			}
 		}
 
 		//pop lap delimiter
 		vertex_queue.pop();
+		//map_dump(map_output, "debug.txt");
 	}
 
 
@@ -60,30 +65,44 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 				found = true;
 			}
 		
-			if (temp_map[a.first][a.second] % 2 == 0) {
-				temp_map[a.first][a.second] += 1;
-			}
+			//if (temp_map[a.first][a.second] % 2 == 0) {
+			//	temp_map[a.first][a.second] += 1;
+			//}
 			
 			if (temp_map[a.first][a.second] == 3) {
 				map_output[a.first][a.second] = 1;
 			}
 
 			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] % 2 == 0) {
+				if (temp_map[a.first - 1][a.second] % 2 == 0) {
+					temp_map[a.first - 1][a.second] += 1;
+				}
 				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
 			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] % 2 == 0) {
+				if (temp_map[a.first][a.second + 1] % 2 == 0) {
+					temp_map[a.first][a.second + 1] += 1;
+				}
 				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
 			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] % 2 == 0) {
+				if (temp_map[a.first + 1][a.second] % 2 == 0) {
+					temp_map[a.first + 1][a.second] += 1;
+				}
 				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
 			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] % 2 == 0) {
+				if (temp_map[a.first][a.second - 1] % 2 == 0) {
+					temp_map[a.first][a.second - 1] += 1;
+				}
 				vertex_queue.push(std::make_pair(a.first, a.second - 1));
 			}
 		}
 
 		//pop lap delimiter
 		vertex_queue.pop();
+
+		//map_dump(map_output, "debug.txt");
 	}
 }
 
