@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Debug.hpp"
+#include "Algorithms.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,6 +22,7 @@ public:
     size_t width = 0;
 
     std::vector<std::vector<size_t>> map;
+    //agent is defined by coordinates of his start pint and finish point
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents;
 
     Map();
@@ -30,6 +34,4 @@ public:
     std::string load_agents(std::string custom_agents_file_name = "");
     std::string reload();
     std::string make_output(std::string output_file_name);
-
-    std::string map_dump(std::string dump_file_name = "");
 };
