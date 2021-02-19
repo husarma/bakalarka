@@ -90,3 +90,18 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 
 	//map_dump(temp_map, "debug.txt");
 }
+
+void BFS_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents) {
+	std::vector<std::thread> threads;
+
+	//Launch threads
+	for (size_t i = 0; i < agents.size(); i++) {
+		threads.push_back(std::thread(BFS, std::ref(map_input), std::ref(map_output), agents[i]));
+	}
+
+	//Join the threads with the main thread
+	for (auto& thread : threads) {
+		thread.join();
+	}
+
+}
