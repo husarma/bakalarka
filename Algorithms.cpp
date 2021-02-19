@@ -167,7 +167,7 @@ void shortest_path(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 void shortest_path_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
 	if (output_paths.size() != agents.size()) {
-		std::cout << "ERROR: different lenghts of paths and agents \n";
+		std::cout << "ERROR: different lenghts of paths and agents\n";
 	}
 
 	std::vector<std::thread> threads;
@@ -188,6 +188,32 @@ void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_pat
 	for (size_t i = 0; i < input_paths.size(); i++) {
 		for (size_t j = 0; j < input_paths[i].size(); j++) {
 			map_output[input_paths[i][j].first][input_paths[i][j].second] = 1;
+		}
+	}
+}
+
+void map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
+
+	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
+		std::cout << "ERROR: different lenghts of maps in union\n";
+	}
+
+	for (size_t i = 0; i < map1.size(); i++) {
+		for (size_t j = 0; j < map1[0].size(); j++) {
+			map_output[i][j] = map1[i][j] | map2[i][j];
+		}
+	}
+}
+
+void map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
+
+	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
+		std::cout << "ERROR: different lenghts of maps in union\n";
+	}
+
+	for (size_t i = 0; i < map1.size(); i++) {
+		for (size_t j = 0; j < map1[0].size(); j++) {
+			map_output[i][j] = map1[i][j] & map2[i][j];
 		}
 	}
 }

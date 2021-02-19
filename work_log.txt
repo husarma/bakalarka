@@ -7,12 +7,11 @@
 ✔	23:55 18. 2. 2021 podpora multithreadingu pre casovo expandovany graf - pre kazdeho agenta jedno vlakno
 ✔	13:51 19. 2. 2021 zrychlenie funkcie casovo expandovany graf
 ✔	16:49 19. 2. 2021 opravenie memory bug v casovo expandovany graf
-	20:52 19. 2. 2021 podpora zjednotenia volnych vrcholov map
-	20:53 19. 2. 2021 podpora prieniku volnych vrcholov map
-✔	20:54 19. 2. 2021 hladanie najkradsej cesty pre agenta
-✔	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najradsich ciet jednotlivych agentov
-	20:56 19. 2. 2021 obalovanie jakradsich ciest volnymi vrcholmi
-	20:57 19. 2. 2021 zjednotenie najkradsich ciest (ak sa nepretinaju tak je to optimalne riesenie)
+✔	20:52 19. 2. 2021 podpora zjednotenia volnych vrcholov map, podpora prieniku volnych vrcholov map
+✔	20:54 19. 2. 2021 hladanie najkratsej cesty pre agenta
+✔	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najratsich ciet jednotlivych agentov
+	20:56 19. 2. 2021 obalovanie najkratsich ciest volnymi vrcholmi
+	20:57 19. 2. 2021 zjednotenie najkratsich ciest (ak sa nepretinaju tak je to optimalne riesenie) funkcia odpovie ano, nie
 ✔	21:59 19. 2. 2021 funkcia na vpisanie najkratsich ciest do grafu
 	22:24 19. 2. 2021 zjednotenie error hlasok (returnovanie)
 	22:25 19. 2. 2021 okomentovanie hlaviciek funkcii
