@@ -182,3 +182,12 @@ void shortest_path_multithread(std::vector<std::vector<size_t>>& map_input, std:
 		thread.join();
 	}
 }
+
+void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths, std::vector<std::vector<size_t>>& map_output) {
+
+	for (size_t i = 0; i < input_paths.size(); i++) {
+		for (size_t j = 0; j < input_paths[i].size(); j++) {
+			map_output[input_paths[i][j].first][input_paths[i][j].second] = 1;
+		}
+	}
+}
