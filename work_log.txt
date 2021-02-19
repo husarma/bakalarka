@@ -5,3 +5,4 @@
 ✔	17:00 17. 2. 2021 vytvorenie debug funkcie map_dump, ktora bude vypisovat do konzole alebo do zadaneho suboru stav mapy
 ✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy
 ✔	23:55 18. 2. 2021 podpora multithreadingu pre BFS - pre kazdeho agenta jedno vlakno
+✔	13:51 19. 2. 2021 zrychlenie funkcie BFS

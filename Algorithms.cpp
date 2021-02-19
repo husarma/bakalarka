@@ -4,17 +4,17 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 
 	std::vector<std::vector<size_t>> temp_map(map_input.size(), std::vector<size_t>(map_input[0].size(), 0));
 
-	std::queue<std::pair<size_t, size_t>> vertex_queue, next_lap;
+	std::queue<std::pair<size_t, size_t>> vertex_queue;
 
 	bool found = false;
-	next_lap.push(agent.first);
+	vertex_queue.push(agent.first);
 
-	while (!(found || next_lap.empty())) {
+	while (!(found || vertex_queue.empty())) {
 
-		vertex_queue = next_lap;
-		next_lap = std::queue<std::pair<size_t, size_t>>();
+		//push lap delimiter
+		vertex_queue.push(std::make_pair(0, 0));
 
-		while (!vertex_queue.empty()) {
+		while (vertex_queue.front().first != 0) {
 			std::pair<size_t, size_t> a = vertex_queue.front();
 			vertex_queue.pop();
 
@@ -22,42 +22,37 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 				found = true;
 			}
 
-			//map_output[a.first][a.second] = 1;
 			temp_map[a.first][a.second] = 2;
-			//map_dump(temp_map, "debug.txt");
 
 			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 2) {
-				//temp_map[a.first - 1][a.second] = 2;
-				next_lap.push(std::make_pair(a.first - 1, a.second));
+				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
 			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] != 2) {
-				//temp_map[a.first][a.second + 1] = 2;
-				next_lap.push(std::make_pair(a.first, a.second + 1));
+				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
 			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] != 2) {
-				//temp_map[a.first + 1][a.second] = 2;
-				next_lap.push(std::make_pair(a.first + 1, a.second));
+				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
 			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] != 2) {
-				//temp_map[a.first][a.second - 1] = 2;
-				next_lap.push(std::make_pair(a.first, a.second - 1));
+				vertex_queue.push(std::make_pair(a.first, a.second - 1));
 			}
 		}
-	}
 
-	//map_dump(temp_map, "debug.txt");
+		//pop lap delimiter
+		vertex_queue.pop();
+	}
 
 
 	found = false;
-	next_lap = std::queue<std::pair<size_t, size_t>>();
-	next_lap.push(agent.second);
+	vertex_queue = std::queue<std::pair<size_t, size_t>>();
+	vertex_queue.push(agent.second);
 
-	while (!(found || next_lap.empty())) {
+	while (!(found || vertex_queue.empty())) {
 
-		vertex_queue = next_lap;
-		next_lap = std::queue<std::pair<size_t, size_t>>();
+		//push lap delimiter
+		vertex_queue.push(std::make_pair(0, 0));
 
-		while (!vertex_queue.empty()) {
+		while (vertex_queue.front().first != 0) {
 			std::pair<size_t, size_t> a = vertex_queue.front();
 			vertex_queue.pop();
 
@@ -74,21 +69,22 @@ void BFS(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<si
 			}
 
 			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] % 2 == 0) {
-				next_lap.push(std::make_pair(a.first - 1, a.second));
+				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
 			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] % 2 == 0) {
-				next_lap.push(std::make_pair(a.first, a.second + 1));
+				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
 			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] % 2 == 0) {
-				next_lap.push(std::make_pair(a.first + 1, a.second));
+				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
 			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] % 2 == 0) {
-				next_lap.push(std::make_pair(a.first, a.second - 1));
+				vertex_queue.push(std::make_pair(a.first, a.second - 1));
 			}
 		}
-	}
 
-	//map_dump(temp_map, "debug.txt");
+		//pop lap delimiter
+		vertex_queue.pop();
+	}
 }
 
 void BFS_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents) {

@@ -3,7 +3,7 @@
 int main(int argc, char** argv) {
 
 
-    Map mapa1 = Map(argv[1], argv[2]);
+    Map mapa1 = Map("maze-32-32-2.txt", "agenti.txt");
     mapa1.reload();
     mapa1.make_output("output1.txt");
     map_dump(mapa1.map, "output_dump.txt");
