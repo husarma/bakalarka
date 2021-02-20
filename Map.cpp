@@ -38,20 +38,20 @@ std::string Map::load_map(std::string custom_map_file_name) {
 
 		std::getline(map_file, map_line); //fourth line is unnecessary
 
-		map = std::vector<std::vector<size_t>>(height + 2);
-		map[0].resize(width + 2, 0); //top bound
-		map[height + 1].resize(width + 2, 0); //bot bound
+		referenece_map = std::vector<std::vector<size_t>>(height + 2);
+		referenece_map[0].resize(width + 2, 0); //top bound
+		referenece_map[height + 1].resize(width + 2, 0); //bot bound
 
 		size_t vertex_number = 1;
 
 		for (size_t i = 1; i <= height + 1; i++) { //reading input
 			if (i != height + 1) {
 				std::getline(map_file, map_line);
-				map[i].resize(width + 2, 0);
+				referenece_map[i].resize(width + 2, 0);
 			}
 			for (size_t j = 0; j < width; j++) {
 				if (map_line[j] == '.' && i != height + 1) {
-					map[i][j + 1] = vertex_number;
+					referenece_map[i][j + 1] = vertex_number;
 					vertex_number++;
 				}
 			}
@@ -124,6 +124,8 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 
 	agents_file.close();
 
+	agents_shortest_paths.resize(agents.size());
+
 	return "OK";
 }
 
@@ -156,27 +158,27 @@ std::string Map::make_output(std::string output_file_name) {
 
 		for (size_t i = 1; i <= height + 1; i++) {
 			for (size_t j = 0; j < width; j++) {
-				if (map[i][j + 1] != 0 && i != height + 1) {
-					map[i][j + 1] = vertex_number;
+				if (referenece_map[i][j + 1] != 0 && i != height + 1) {
+					referenece_map[i][j + 1] = vertex_number;
 					vertex_number++;
 				}
 				if (i > 1) {
-					if (map[i - 1][j + 1] != 0) {
-						if (map[i - 1][j + 1] != 1) {
+					if (referenece_map[i - 1][j + 1] != 0) {
+						if (referenece_map[i - 1][j + 1] != 1) {
 							ofile << "," << std::endl;
 						}
-						ofile << "    $neibs(" << map[i - 1][j + 1] << ",[" << map[i - 1][j + 1];
-						if (map[i - 2][j + 1] != 0) {
-							ofile << "," << map[i - 2][j + 1];
+						ofile << "    $neibs(" << referenece_map[i - 1][j + 1] << ",[" << referenece_map[i - 1][j + 1];
+						if (referenece_map[i - 2][j + 1] != 0) {
+							ofile << "," << referenece_map[i - 2][j + 1];
 						}
-						if (map[i - 1][j + 2] != 0) {
-							ofile << "," << map[i - 1][j + 2];
+						if (referenece_map[i - 1][j + 2] != 0) {
+							ofile << "," << referenece_map[i - 1][j + 2];
 						}
-						if (map[i][j + 1] != 0) {
-							ofile << "," << map[i][j + 1];
+						if (referenece_map[i][j + 1] != 0) {
+							ofile << "," << referenece_map[i][j + 1];
 						}
-						if (map[i - 1][j] != 0) {
-							ofile << "," << map[i - 1][j];
+						if (referenece_map[i - 1][j] != 0) {
+							ofile << "," << referenece_map[i - 1][j];
 						}
 						ofile << "])";
 					}
@@ -196,7 +198,7 @@ std::string Map::make_output(std::string output_file_name) {
 			int asx = agents[i].first.second;
 			int aey = agents[i].second.first;
 			int aex = agents[i].second.second;
-			ofile << "(" << map[asy][asx] << "," << map[aey][aex] << ")";
+			ofile << "(" << referenece_map[asy][asx] << "," << referenece_map[aey][aex] << ")";
 		}
 
 		ofile << "]," << std::endl;

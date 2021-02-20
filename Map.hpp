@@ -21,9 +21,11 @@ public:
     size_t height = 0;
     size_t width = 0;
 
-    std::vector<std::vector<size_t>> map;
+    std::vector<std::vector<size_t>> referenece_map;
     //agent is defined by coordinates of his start pint and finish point
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents;
+
+    std::vector<std::vector<std::pair<size_t, size_t>>> agents_shortest_paths;
 
     Map();
     Map(std::string map_file_name, std::string agents_file_name);

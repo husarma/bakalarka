@@ -1,8 +1,8 @@
 #include "Algorithms.hpp"
 
-void time_expanded(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 
-	std::vector<std::vector<size_t>> temp_map(map_input.size(), std::vector<size_t>(map_input[0].size(), 0));
+	std::vector<std::vector<size_t>> temp_map(reference_map.size(), std::vector<size_t>(reference_map[0].size(), 0));
 
 	std::queue<std::pair<size_t, size_t>> vertex_queue;
 
@@ -22,19 +22,19 @@ void time_expanded(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 				found = true;
 			}
 
-			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 2) {
+			if (reference_map[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 2) {
 				temp_map[a.first - 1][a.second] = 2;
 				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
-			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] != 2) {
+			if (reference_map[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] != 2) {
 				temp_map[a.first][a.second + 1] = 2;
 				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
-			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] != 2) {
+			if (reference_map[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] != 2) {
 				temp_map[a.first + 1][a.second] = 2;
 				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
-			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] != 2) {
+			if (reference_map[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] != 2) {
 				temp_map[a.first][a.second - 1] = 2;
 				vertex_queue.push(std::make_pair(a.first, a.second - 1));
 			}
@@ -67,25 +67,25 @@ void time_expanded(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 				map_output[a.first][a.second] = 1;
 			}
 
-			if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] % 2 == 0) {
+			if (reference_map[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] % 2 == 0) {
 				if (temp_map[a.first - 1][a.second] % 2 == 0) {
 					temp_map[a.first - 1][a.second] += 1;
 				}
 				vertex_queue.push(std::make_pair(a.first - 1, a.second));
 			}
-			if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] % 2 == 0) {
+			if (reference_map[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] % 2 == 0) {
 				if (temp_map[a.first][a.second + 1] % 2 == 0) {
 					temp_map[a.first][a.second + 1] += 1;
 				}
 				vertex_queue.push(std::make_pair(a.first, a.second + 1));
 			}
-			if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] % 2 == 0) {
+			if (reference_map[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] % 2 == 0) {
 				if (temp_map[a.first + 1][a.second] % 2 == 0) {
 					temp_map[a.first + 1][a.second] += 1;
 				}
 				vertex_queue.push(std::make_pair(a.first + 1, a.second));
 			}
-			if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] % 2 == 0) {
+			if (reference_map[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] % 2 == 0) {
 				if (temp_map[a.first][a.second - 1] % 2 == 0) {
 					temp_map[a.first][a.second - 1] += 1;
 				}
@@ -100,12 +100,13 @@ void time_expanded(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 	}
 }
 
-void time_expanded_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+void time_expanded_multithread(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+	
 	std::vector<std::thread> threads;
 
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {
-		threads.push_back(std::thread(time_expanded, std::ref(map_input), std::ref(map_output), agents[i]));
+		threads.push_back(std::thread(time_expanded, std::ref(reference_map), std::ref(map_output), agents[i]));
 	}
 
 	//Join the threads with the main thread
@@ -114,8 +115,9 @@ void time_expanded_multithread(std::vector<std::vector<size_t>>& map_input, std:
 	}
 }
 
-void shortest_path(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
-	std::vector<std::vector<std::pair<size_t, size_t>>> temp_map(map_input.size(), std::vector<std::pair<size_t, size_t>>(map_input[0].size(), std::make_pair(0, 0)));
+void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+	
+	std::vector<std::vector<std::pair<size_t, size_t>>> temp_map(reference_map.size(), std::vector<std::pair<size_t, size_t>>(reference_map[0].size(), std::make_pair(0, 0)));
 
 	std::queue<std::pair<size_t, size_t>> vertex_queue;
 
@@ -131,22 +133,22 @@ void shortest_path(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 			found = true;
 		}
 
-		if (map_input[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second].first == 0) {
+		if (reference_map[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second].first == 0) {
 			temp_map[a.first - 1][a.second].first = a.first;
 			temp_map[a.first - 1][a.second].second = a.second;
 			vertex_queue.push(std::make_pair(a.first - 1, a.second));
 		}
-		if (map_input[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1].first == 0) {
+		if (reference_map[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1].first == 0) {
 			temp_map[a.first][a.second + 1].first = a.first;
 			temp_map[a.first][a.second + 1].second = a.second;
 			vertex_queue.push(std::make_pair(a.first, a.second + 1));
 		}
-		if (map_input[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second].first == 0) {
+		if (reference_map[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second].first == 0) {
 			temp_map[a.first + 1][a.second].first = a.first;
 			temp_map[a.first + 1][a.second].second = a.second;
 			vertex_queue.push(std::make_pair(a.first + 1, a.second));
 		}
-		if (map_input[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1].first == 0) {
+		if (reference_map[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1].first == 0) {
 			temp_map[a.first][a.second - 1].first = a.first;
 			temp_map[a.first][a.second - 1].second = a.second;
 			vertex_queue.push(std::make_pair(a.first, a.second - 1));
@@ -164,7 +166,7 @@ void shortest_path(std::vector<std::vector<size_t>>& map_input, std::vector<std:
 	}
 }
 
-void shortest_path_multithread(std::vector<std::vector<size_t>>& map_input, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+void shortest_path_multithread(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
 	if (output_paths.size() != agents.size()) {
 		std::cout << "ERROR: different lenghts of paths and agents\n";
@@ -174,7 +176,7 @@ void shortest_path_multithread(std::vector<std::vector<size_t>>& map_input, std:
 
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {
-		threads.push_back(std::thread(shortest_path, std::ref(map_input), std::ref(output_paths), i, agents[i]));
+		threads.push_back(std::thread(shortest_path, std::ref(reference_map), std::ref(output_paths), i, agents[i]));
 	}
 
 	//Join the threads with the main thread
@@ -214,6 +216,48 @@ void map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::v
 	for (size_t i = 0; i < map1.size(); i++) {
 		for (size_t j = 0; j < map1[0].size(); j++) {
 			map_output[i][j] = map1[i][j] & map2[i][j];
+		}
+	}
+}
+
+void add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_surround, std::vector<std::vector<size_t>>& map_output) {
+
+	bool same = false;
+	std::vector<std::vector<size_t>> copy;
+	if (&map_to_surround == &map_output) {
+		same = true;
+		copy = map_to_surround;
+	}
+
+	bool surround = false;
+	for (size_t i = 0; i < reference_map.size(); i++) {
+		for (size_t j = 0; j < reference_map[0].size(); j++) {
+			
+			if (same) {
+				if (copy[i][j] != 0) {
+					surround = true;
+				}
+			}
+			else if (map_to_surround[i][j] != 0) {
+				surround = true;
+			}
+
+			if (surround) {
+				if (reference_map[i - 1][j] != 0) {
+					map_output[i - 1][j] = 1;
+				}
+				if (reference_map[i][j + 1] != 0) {
+					map_output[i][j + 1] = 1;
+				}
+				if (reference_map[i + 1][j] != 0) {
+					map_output[i + 1][j] = 1;
+				}
+				if (reference_map[i][j - 1] != 0) {
+					map_output[i][j - 1] = 1;
+				}
+
+				surround = false;
+			}
 		}
 	}
 }
