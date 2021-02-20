@@ -142,7 +142,12 @@ std::string Map::reload() {
 		ret += ret_load_agents;
 	}
 
-	return ret;
+	if (ret == "") {
+		return "OK";
+	}
+	else {
+		return ret;
+	}
 }
 
 std::string Map::make_output(std::string output_file_name) {

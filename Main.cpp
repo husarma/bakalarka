@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
 
     std::vector<std::vector<size_t>> computed_map1(mapa1.referenece_map.size(), std::vector<size_t>(mapa1.referenece_map[0].size(), 0));
 
-    shortest_path_multithread(mapa1.referenece_map, mapa1.agents_shortest_paths, mapa1.agents);
+    shortest_path_multiagent(mapa1.referenece_map, mapa1.agents_shortest_paths, mapa1.agents);
 
     paths_to_map(mapa1.agents_shortest_paths, computed_map1);
 

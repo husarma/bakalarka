@@ -42,7 +42,6 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 
 		//pop lap delimiter
 		vertex_queue.pop();
-		//map_dump(map_output, "debug.txt");
 	}
 
 
@@ -95,13 +94,15 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 
 		//pop lap delimiter
 		vertex_queue.pop();
-
-		//map_dump(map_output, "debug.txt");
 	}
 }
 
-void time_expanded_multithread(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 	
+	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size()) {
+		return "ERROR: different lenghts of maps in union\n";
+	}
+
 	std::vector<std::thread> threads;
 
 	//Launch threads
@@ -113,6 +114,8 @@ void time_expanded_multithread(std::vector<std::vector<size_t>>& reference_map, 
 	for (auto& thread : threads) {
 		thread.join();
 	}
+
+	return "OK";
 }
 
 void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
@@ -166,10 +169,10 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 	}
 }
 
-void shortest_path_multithread(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
 	if (output_paths.size() != agents.size()) {
-		std::cout << "ERROR: different lenghts of paths and agents\n";
+		return "ERROR: different lenghts of paths and agents\n";
 	}
 
 	std::vector<std::thread> threads;
@@ -183,6 +186,8 @@ void shortest_path_multithread(std::vector<std::vector<size_t>>& reference_map, 
 	for (auto& thread : threads) {
 		thread.join();
 	}
+
+	return "OK";
 }
 
 void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths, std::vector<std::vector<size_t>>& map_output) {
@@ -194,10 +199,10 @@ void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_pat
 	}
 }
 
-void map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
+std::string map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
 
 	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
-		std::cout << "ERROR: different lenghts of maps in union\n";
+		return "ERROR: different lenghts of maps in union\n";
 	}
 
 	for (size_t i = 0; i < map1.size(); i++) {
@@ -205,12 +210,14 @@ void map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<s
 			map_output[i][j] = map1[i][j] | map2[i][j];
 		}
 	}
+
+	return "OK";
 }
 
-void map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
+std::string map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
 
 	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
-		std::cout << "ERROR: different lenghts of maps in union\n";
+		return "ERROR: different lenghts of maps in union\n";
 	}
 
 	for (size_t i = 0; i < map1.size(); i++) {
@@ -218,9 +225,17 @@ void map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::v
 			map_output[i][j] = map1[i][j] & map2[i][j];
 		}
 	}
+
+	return "OK";
 }
 
-void add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_surround, std::vector<std::vector<size_t>>& map_output) {
+std::string add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_surround, std::vector<std::vector<size_t>>& map_output) {
+	
+	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size() ||
+		map_to_surround.size() != map_output.size() || map_to_surround[0].size() != map_output[0].size() ||
+		reference_map.size() != map_to_surround.size() || reference_map[0].size() != map_to_surround[0].size()) {
+		return "ERROR: different lenghts of maps in surroundings\n";
+	}
 
 	bool same = false;
 	std::vector<std::vector<size_t>> copy;
@@ -260,6 +275,8 @@ void add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std:
 			}
 		}
 	}
+
+	return "OK";
 }
 
 bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths) {
