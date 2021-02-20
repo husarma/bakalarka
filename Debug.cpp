@@ -1,6 +1,11 @@
 #include "Debug.hpp"
 
-std::string map_dump(std::vector<std::vector<size_t>>& reference_map, std::string dump_file_name) {
+/** Writes stage of map to file.
+*
+* @param map_to_dump map to be dumped.
+* @param dump_file_name file to be wtiten.
+*/
+std::string map_dump(std::vector<std::vector<size_t>>& map_to_dump, std::string dump_file_name) {
 
 	std::ofstream ofile;
 	if (dump_file_name != "") {
@@ -17,10 +22,9 @@ std::string map_dump(std::vector<std::vector<size_t>>& reference_map, std::strin
 	}
 
 	ofile << std::endl;
-	ofile << "Map:" << std::endl;
-	for (size_t i = 0; i < reference_map.size(); i++) {
-		for (size_t j = 0; j < reference_map[0].size(); j++) {
-			if (reference_map[i][j] != 0) {
+	for (size_t i = 0; i < map_to_dump.size(); i++) {
+		for (size_t j = 0; j < map_to_dump[0].size(); j++) {
+			if (map_to_dump[i][j] != 0) {
 				ofile << ".";
 				//ofile << reference_map[i][j];
 			}

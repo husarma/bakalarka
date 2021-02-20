@@ -1,5 +1,14 @@
 #include "Algorithms.hpp"
 
+/** Computes time expanded graph for one agent.
+* 
+* Uses BFS algorithm from start to finish and from finish to start and as a results 
+* takes intersection of used vertices.
+* 
+* @param reference_map original input map.
+* @param map_output map for result writing.
+* @param agent pair containig agents start and finish coordinates in pair.
+*/
 void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 
 	std::vector<std::vector<size_t>> temp_map(reference_map.size(), std::vector<size_t>(reference_map[0].size(), 0));
@@ -97,6 +106,15 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 	}
 }
 
+/** Computes time expanded graph for group of agents.
+* 
+* Multithreading is used for computing.
+*
+* @param reference_map original input map.
+* @param map_output map for result writing.
+* @param agents vector of pairs containig agents start and finish coordinates in pair.
+* @return error message, "OK" if everything ended well.
+*/
 std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 	
 	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size()) {
@@ -118,6 +136,15 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& reference
 	return "OK";
 }
 
+/** Computes the shortest path in graph for one agent.
+* 
+* Uses BFS algorithm.
+*
+* @param reference_map original input map.
+* @param output_paths vector of pairs for writing the result for agent.
+* @param index_in_output index in output_paths to write result.
+* @param agent vector of pairs containig agents start and finish coordinates in pair.
+*/
 void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 	
 	std::vector<std::vector<std::pair<size_t, size_t>>> temp_map(reference_map.size(), std::vector<std::pair<size_t, size_t>>(reference_map[0].size(), std::make_pair(0, 0)));
@@ -169,6 +196,15 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 	}
 }
 
+/** Computes the shortest path in graph for group of agents.
+*
+* Multithreading is used for computing.
+*
+* @param reference_map original input map.
+* @param output_paths vector of pairs for writing the result for agent.
+* @param agents vector of pairs containig agents start and finish coordinates in pair.
+* @return error message, "OK" if everything ended well.
+*/
 std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
 	if (output_paths.size() != agents.size()) {
@@ -190,6 +226,11 @@ std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference
 	return "OK";
 }
 
+/** Writes paths to map.
+*
+* @param input_paths vector of pairs including agents paths.
+* @param map_output map for result writing.
+*/
 void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths, std::vector<std::vector<size_t>>& map_output) {
 
 	for (size_t i = 0; i < input_paths.size(); i++) {
@@ -199,6 +240,12 @@ void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_pat
 	}
 }
 
+/** Makes union of free vertices from two maps.
+*
+* @param map1 first map for union.
+* @param map2 second map for union.
+* @param map_output map for result writing, can be one of unified maps.
+*/
 std::string map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
 
 	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
@@ -214,6 +261,12 @@ std::string map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::v
 	return "OK";
 }
 
+/** Makes intersection of free vertices from two maps.
+*
+* @param map1 first map for intersect.
+* @param map2 second map for intersect.
+* @param map_output map for result writing, can be one of intersected maps.
+*/
 std::string map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output) {
 
 	if (map1.size() != map2.size() || map1[0].size() != map2[0].size()) {
@@ -229,19 +282,29 @@ std::string map_intersection(std::vector<std::vector<size_t>>& map1, std::vector
 	return "OK";
 }
 
-std::string add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_surround, std::vector<std::vector<size_t>>& map_output) {
+/** Expand free vertices in map by souranding the existing ones.
+*
+* Can write the result back to the same map, but it is slower, 
+* because it need to copy the map for computing
+*
+* @param reference_map original input map.
+* @param map_to_expand map to be expanded.
+* @param map_output map for result writing, can be the same as expanded map.
+* @return error message, "OK" if everything ended well.
+*/
+std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_expand, std::vector<std::vector<size_t>>& map_output) {
 	
 	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size() ||
-		map_to_surround.size() != map_output.size() || map_to_surround[0].size() != map_output[0].size() ||
-		reference_map.size() != map_to_surround.size() || reference_map[0].size() != map_to_surround[0].size()) {
+		map_to_expand.size() != map_output.size() || map_to_expand[0].size() != map_output[0].size() ||
+		reference_map.size() != map_to_expand.size() || reference_map[0].size() != map_to_expand[0].size()) {
 		return "ERROR: different lenghts of maps in surroundings\n";
 	}
 
 	bool same = false;
 	std::vector<std::vector<size_t>> copy;
-	if (&map_to_surround == &map_output) {
+	if (&map_to_expand == &map_output) {
 		same = true;
-		copy = map_to_surround;
+		copy = map_to_expand;
 	}
 
 	bool surround = false;
@@ -253,7 +316,7 @@ std::string add_free_surroundings(std::vector<std::vector<size_t>>& reference_ma
 					surround = true;
 				}
 			}
-			else if (map_to_surround[i][j] != 0) {
+			else if (map_to_expand[i][j] != 0) {
 				surround = true;
 			}
 
@@ -279,6 +342,11 @@ std::string add_free_surroundings(std::vector<std::vector<size_t>>& reference_ma
 	return "OK";
 }
 
+/** Writes paths to map.
+*
+* @param input_paths vector of pairs including agents paths.
+* @return true if paths have something common, false elsewhere
+*/
 bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths) {
 
 	for (size_t curr_path = 0; curr_path < input_paths.size(); curr_path++) {

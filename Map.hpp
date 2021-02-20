@@ -9,7 +9,10 @@
 #include <string>
 #include <vector>
 
-
+/**
+ *  Class that holds information about map and agents.
+ *  Can generate input for picat.
+ */
 class Map {
 public:
     const size_t height_number_index = 7;
@@ -21,7 +24,7 @@ public:
     size_t height = 0;
     size_t width = 0;
 
-    std::vector<std::vector<size_t>> referenece_map;
+    std::vector<std::vector<size_t>> map;
     //agent is defined by coordinates of his start pint and finish point
     std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents;
 
@@ -35,5 +38,5 @@ public:
     std::string load_map(std::string custom_map_file_name = "");
     std::string load_agents(std::string custom_agents_file_name = "");
     std::string reload();
-    std::string make_output(std::string output_file_name);
+    std::string make_output(std::string output_file_name, std::vector<std::vector<size_t>>& map);
 };
