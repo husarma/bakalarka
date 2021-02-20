@@ -17,3 +17,5 @@ void map_union(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<s
 void map_intersection(std::vector<std::vector<size_t>>& map1, std::vector<std::vector<size_t>>& map2, std::vector<std::vector<size_t>>& map_output);
 
 void add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_surround, std::vector<std::vector<size_t>>& map_output);
+
+bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths);

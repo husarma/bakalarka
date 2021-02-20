@@ -261,3 +261,21 @@ void add_free_surroundings(std::vector<std::vector<size_t>>& reference_map, std:
 		}
 	}
 }
+
+bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths) {
+
+	for (size_t curr_path = 0; curr_path < input_paths.size(); curr_path++) {
+		for (size_t curr_position = 0; curr_position < input_paths[curr_path].size(); curr_position++) {
+
+			for (size_t searched_path = curr_path + 1; searched_path < input_paths.size(); searched_path++) {
+				for (size_t searched_position = 0; searched_position < input_paths[searched_path].size(); searched_position++) {
+
+					if (input_paths[curr_path][curr_position] == input_paths[searched_path][searched_position]) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}

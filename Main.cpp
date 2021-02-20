@@ -17,6 +17,8 @@ int main(int argc, char** argv) {
     map_dump(computed_map1, "output_dump.txt");
 
     add_free_surroundings(mapa1.referenece_map, computed_map1, computed_map1);
+
+    auto a = are_paths_separate(mapa1.agents_shortest_paths);
     
     map_dump(computed_map1, "output_dump.txt");
 
