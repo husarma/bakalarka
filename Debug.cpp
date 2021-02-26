@@ -26,7 +26,7 @@ std::string map_dump(std::vector<std::vector<size_t>>& map_to_dump, std::string 
 		for (size_t j = 0; j < map_to_dump[0].size(); j++) {
 			if (map_to_dump[i][j] != 0) {
 				ofile << ".";
-				//ofile << reference_map[i][j];
+				//ofile << map_to_dump[i][j];
 			}
 			else {
 				ofile << "#";

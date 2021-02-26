@@ -5,22 +5,24 @@ int main(int argc, char** argv) {
 
     Map mapa1 = Map("map.txt", "agenti.txt");
     mapa1.reload();
-    mapa1.make_output("outputRoom.txt", mapa1.map);
+    mapa1.make_output_without_preprocesing("outputRoom.txt", mapa1.map);
     map_dump(mapa1.map, "output_dump.txt");
 
-    std::vector<std::vector<size_t>> computed_map1(mapa1.map.size(), std::vector<size_t>(mapa1.map[0].size(), 0));
+    mapa1.reset_computed_map();
 
     shortest_path_multiagent(mapa1.map, mapa1.agents_shortest_paths, mapa1.agents);
 
-    paths_to_map(mapa1.agents_shortest_paths, computed_map1);
+    paths_to_map(mapa1.agents_shortest_paths, mapa1.computed_map);
 
-    map_dump(computed_map1, "output_dump.txt");
+    map_dump(mapa1.computed_map, "output_dump.txt");
 
-    expand_map(mapa1.map, computed_map1, computed_map1);
+    expand_map(mapa1.map, mapa1.computed_map, mapa1.computed_map);
+
+    mapa1.give_new_numbering(mapa1.computed_map);
 
     auto a = are_paths_separate(mapa1.agents_shortest_paths);
     
-    map_dump(computed_map1, "output_dump.txt");
+    map_dump(mapa1.computed_map, "output_dump.txt");
 
 
     return 0;

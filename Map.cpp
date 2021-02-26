@@ -184,7 +184,7 @@ std::string Map::reload() {
 * @param map from to generate input for picat.
 * @return error message, "OK" if everything ended well.
 */
-std::string Map::make_output(std::string output_file_name, std::vector<std::vector<size_t>>& map) {
+std::string Map::make_output_without_preprocesing(std::string output_file_name, std::vector<std::vector<size_t>>& map) {
 
 	std::ofstream ofile;
 	ofile.open(output_file_name);
@@ -252,4 +252,27 @@ std::string Map::make_output(std::string output_file_name, std::vector<std::vect
 	ofile.close();
 
 	return "OK";
+}
+
+/** Zeroes computed map and mirrors sizes of loaded map.*/
+void Map::reset_computed_map() {
+
+	computed_map = std::vector<std::vector<size_t>>(map.size(), std::vector<size_t>(map[0].size(), 0));
+}
+
+/** Gives new appropriete number to each vertex.
+*
+* @param map_to_renumber map to be renumbered.
+*/
+void Map::give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
+
+	size_t vertex_number = 1;
+	for (size_t i = 0; i < map_to_renumber.size(); i++) {
+		for (size_t j = 0; j < map_to_renumber[0].size(); j++) {
+			if (map_to_renumber[i][j] != 0) {
+				map_to_renumber[i][j] = vertex_number;
+				vertex_number++;
+			}
+		}
+	}
 }

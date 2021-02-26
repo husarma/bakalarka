@@ -16,3 +16,12 @@
 ✔	22:24 19. 2. 2021 zjednotenie error hlasok (returnovanie)
 ✔	22:25 19. 2. 2021 okomentovanie hlaviciek funkcii
 ✔	15:27 20. 2. 2021 pridavanie volnych vrcholov okolo existujucich
+2. odlahcenie picatu o predprocesing
+	14:41 25. 2. 2021 vypisovanie vrcholov pre kazdeho agenta a cas v ktorych sa nemoze nachadzat (vyuzitie time expanded graphu)
+	14:42 25. 2. 2021 vypisovanie casu v ktorom sa to ma picat pokusit vyriesit
+	14:43 25. 2. 2021 rozchodit zavolanie picatu
+	14:44 25. 2. 2021 skusanie experimentov, casovo_expand vs nakradsia cesta s k
+	15:02 25. 2. 2021 napisanie priblizneho obsahu prace s kratkymi popiskami
+	18:24 26. 2. 2021 pocitanie time expanded graph-u pre kazdeho agenta
+✔	18:38 26. 2. 2021 funkcia na vynulovanie vypocitanej mapy
+✔	18:39 26. 2. 2021 funkcia, ktora precisluje mapu (potrebne pre pocitanie time expanded graph-u)
