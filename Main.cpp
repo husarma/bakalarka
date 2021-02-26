@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
 
     //give_new_numbering(mapa1.computed_map);
 
-    time_expanded(mapa1.computed_map, mapa1.time_expanded_graph, 0, mapa1.agents[0]);
+    time_expanded_multiagent(mapa1.computed_map, mapa1.time_expanded_graph, mapa1.agents);
 
     auto a = are_paths_separate(mapa1.agents_shortest_paths);
     

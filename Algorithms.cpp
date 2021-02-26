@@ -147,7 +147,7 @@ std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, s
 * @param reference_map original input map.
 * @param output_paths vector of pairs for writing the result for agent.
 * @param index_in_output index in output_paths to write result.
-* @param agent vector of pairs containig agents start and finish coordinates in pair.
+* @param agent pair containig agent's start and finish coordinates in pair.
 */
 void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 	
@@ -205,7 +205,7 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 * Multithreading is used for computing.
 *
 * @param reference_map original input map.
-* @param output_paths vector of pairs for writing the result for agent.
+* @param output_paths vector for writing the result for agents.
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended well.
 */
@@ -386,6 +386,15 @@ void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 	}
 }
 
+/** Computes time expanded graph for one agent.
+*
+* Uses BFS algorithm.
+*
+* @param input_map reference map.
+* @param output_time_expanded_draph vector for writing the result for agent.
+* @param index_in_output index in output_time_expanded_draph to write result.
+* @param agent pair containig agent's start and finish coordinates in pair.
+*/
 void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 	
 	give_new_numbering(input_map);
@@ -443,4 +452,34 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 		//pop lap delimiter
 		vertex_queue.pop();
 	}
+}
+
+/** Computes time expanded graph for group of agents.
+*
+* Multithreading is used for computing.
+*
+* @param input_map reference map.
+* @param output_time_expanded_draph vector for writing the result for agents.
+* @param agents vector of pairs containig agent's start and finish coordinates in pair.
+* @return error message, "OK" if everything ended well.
+*/
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+
+	if (output_time_expanded_draph.size() != agents.size()) {
+		return "ERROR: different lenghts of time_expanded and agents\n";
+	}
+
+	std::vector<std::thread> threads;
+
+	//Launch threads
+	for (size_t i = 0; i < agents.size(); i++) {
+		threads.push_back(std::thread(time_expanded, std::ref(input_map), std::ref(output_time_expanded_draph), i, agents[i]));
+	}
+
+	//Join the threads with the main thread
+	for (auto& thread : threads) {
+		thread.join();
+	}
+
+	return "OK";
 }

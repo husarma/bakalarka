@@ -23,3 +23,4 @@ bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& inp
 void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber);
 
 void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent);
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents);
