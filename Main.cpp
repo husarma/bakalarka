@@ -18,7 +18,9 @@ int main(int argc, char** argv) {
 
     expand_map(mapa1.map, mapa1.computed_map, mapa1.computed_map);
 
-    mapa1.give_new_numbering(mapa1.computed_map);
+    //give_new_numbering(mapa1.computed_map);
+
+    time_expanded(mapa1.computed_map, mapa1.time_expanded_graph, 0, mapa1.agents[0]);
 
     auto a = are_paths_separate(mapa1.agents_shortest_paths);
     

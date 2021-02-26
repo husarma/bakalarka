@@ -46,5 +46,4 @@ public:
     std::string make_output_without_preprocesing(std::string output_file_name, std::vector<std::vector<size_t>>& map);
     
     void reset_computed_map();
-    void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber);
 };

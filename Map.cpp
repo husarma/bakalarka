@@ -149,6 +149,7 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 	agents_file.close();
 
 	agents_shortest_paths.resize(agents.size());
+	time_expanded_graph.resize(agents.size());
 
 	return "OK";
 }
@@ -258,21 +259,4 @@ std::string Map::make_output_without_preprocesing(std::string output_file_name, 
 void Map::reset_computed_map() {
 
 	computed_map = std::vector<std::vector<size_t>>(map.size(), std::vector<size_t>(map[0].size(), 0));
-}
-
-/** Gives new appropriete number to each vertex.
-*
-* @param map_to_renumber map to be renumbered.
-*/
-void Map::give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
-
-	size_t vertex_number = 1;
-	for (size_t i = 0; i < map_to_renumber.size(); i++) {
-		for (size_t j = 0; j < map_to_renumber[0].size(); j++) {
-			if (map_to_renumber[i][j] != 0) {
-				map_to_renumber[i][j] = vertex_number;
-				vertex_number++;
-			}
-		}
-	}
 }

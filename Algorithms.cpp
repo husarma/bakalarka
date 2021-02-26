@@ -1,6 +1,8 @@
 #include "Algorithms.hpp"
 
-/** Computes time expanded graph for one agent.
+#include <algorithm>
+
+/** Computes bubble for one agent.
 * 
 * Uses BFS algorithm from start to finish and from finish to start and as a results 
 * takes intersection of used vertices.
@@ -9,7 +11,7 @@
 * @param map_output map for result writing.
 * @param agent pair containig agents start and finish coordinates in pair.
 */
-void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void bubble(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
 
 	std::vector<std::vector<size_t>> temp_map(reference_map.size(), std::vector<size_t>(reference_map[0].size(), 0));
 
@@ -17,6 +19,7 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 
 	bool found = false;
 	vertex_queue.push(agent.first);
+	temp_map[agent.first.first][agent.first.second] = 2;
 
 	while (!(found || vertex_queue.empty())) {
 
@@ -57,6 +60,7 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 	found = false;
 	vertex_queue = std::queue<std::pair<size_t, size_t>>();
 	vertex_queue.push(agent.second);
+	temp_map[agent.second.first][agent.second.second] += 1;
 
 	while (!(found || vertex_queue.empty())) {
 
@@ -106,7 +110,7 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 	}
 }
 
-/** Computes time expanded graph for group of agents.
+/** Computes bubbles for group of agents.
 * 
 * Multithreading is used for computing.
 *
@@ -115,7 +119,7 @@ void time_expanded(std::vector<std::vector<size_t>>& reference_map, std::vector<
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended well.
 */
-std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 	
 	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size()) {
 		return "ERROR: different lenghts of maps in union\n";
@@ -125,7 +129,7 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& reference
 
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {
-		threads.push_back(std::thread(time_expanded, std::ref(reference_map), std::ref(map_output), agents[i]));
+		threads.push_back(std::thread(bubble, std::ref(reference_map), std::ref(map_output), agents[i]));
 	}
 
 	//Join the threads with the main thread
@@ -363,4 +367,80 @@ bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& inp
 		}
 	}
 	return true;
+}
+
+/** Gives new appropriete number to each vertex.
+*
+* @param map_to_renumber map to be renumbered.
+*/
+void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
+
+	size_t vertex_number = 1;
+	for (size_t i = 0; i < map_to_renumber.size(); i++) {
+		for (size_t j = 0; j < map_to_renumber[0].size(); j++) {
+			if (map_to_renumber[i][j] != 0) {
+				map_to_renumber[i][j] = vertex_number;
+				vertex_number++;
+			}
+		}
+	}
+}
+
+void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+	
+	give_new_numbering(input_map);
+	
+	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
+
+	std::queue<std::pair<size_t, size_t>> vertex_queue;
+
+	std::vector<size_t> new_vertices_in_time;
+
+	bool found = false;
+	vertex_queue.push(agent.first);
+	temp_map[agent.first.first][agent.first.second] = 1;
+	new_vertices_in_time.push_back(input_map[agent.first.first][agent.first.second]);
+
+	while (!(found || vertex_queue.empty())) {
+
+		//push lap delimiter
+		vertex_queue.push(std::make_pair(0, 0));
+
+		std::sort(new_vertices_in_time.begin(), new_vertices_in_time.end());
+		output_time_expanded_draph[index_in_output].push_back(new_vertices_in_time);
+		new_vertices_in_time.clear();
+
+		while (vertex_queue.front().first != 0) {
+			std::pair<size_t, size_t> a = vertex_queue.front();
+			vertex_queue.pop();
+
+			if (a.first == agent.second.first && a.second == agent.second.second) {
+				found = true;
+			}
+
+			if (input_map[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 1) {
+				temp_map[a.first - 1][a.second] = 1;
+				vertex_queue.push(std::make_pair(a.first - 1, a.second));
+				new_vertices_in_time.push_back(input_map[a.first - 1][a.second]);
+			}
+			if (input_map[a.first][a.second + 1] != 0 && temp_map[a.first][a.second + 1] != 1) {
+				temp_map[a.first][a.second + 1] = 1;
+				vertex_queue.push(std::make_pair(a.first, a.second + 1));
+				new_vertices_in_time.push_back(input_map[a.first][a.second + 1]);
+			}
+			if (input_map[a.first + 1][a.second] != 0 && temp_map[a.first + 1][a.second] != 1) {
+				temp_map[a.first + 1][a.second] = 1;
+				vertex_queue.push(std::make_pair(a.first + 1, a.second));
+				new_vertices_in_time.push_back(input_map[a.first + 1][a.second]);
+			}
+			if (input_map[a.first][a.second - 1] != 0 && temp_map[a.first][a.second - 1] != 1) {
+				temp_map[a.first][a.second - 1] = 1;
+				vertex_queue.push(std::make_pair(a.first, a.second - 1));
+				new_vertices_in_time.push_back(input_map[a.first][a.second - 1]);
+			}
+		}
+
+		//pop lap delimiter
+		vertex_queue.pop();
+	}
 }
