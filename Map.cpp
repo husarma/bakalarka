@@ -32,7 +32,7 @@ void Map::set_agents_file(std::string new_agents_file_name) {
 /** Loading map from file.
 *
 * @param custom_map_file_name custom file containing map, optional.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string Map::load_map(std::string custom_map_file_name) {
 
@@ -93,7 +93,7 @@ std::string Map::load_map(std::string custom_map_file_name) {
 /** Loading agents from file.
 *
 * @param custom_agents_file_name custom file containing agents, optional.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string Map::load_agents(std::string custom_agents_file_name) {
 
@@ -156,7 +156,7 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 
 /** Loading map and agents from files.
 *
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string Map::reload() {
 
@@ -179,72 +179,167 @@ std::string Map::reload() {
 	}
 }
 
-/** Generates input for picat.
+/** Generates graph and agents output.
 *
-* @param output_file_name file for writing.
-* @param map from to generate input for picat.
-* @return error message, "OK" if everything ended well.
+* @param ofile output file stream for writing.
+* @return number of vertices.
 */
-std::string Map::make_output_without_preprocesing(std::string output_file_name, std::vector<std::vector<size_t>>& map) {
+size_t Map::make_graph_and_agents_output(std::ofstream& ofile) {
+
+	size_t vertex_number = 0;
+
+	ofile << "    Graph = [" << std::endl;
+
+	for (size_t i = 1; i <= height + 1; i++) {
+		for (size_t j = 0; j < width; j++) {
+			if (computed_map[i][j + 1] != 0 && i != height + 1) {
+				vertex_number++;
+				computed_map[i][j + 1] = vertex_number;
+			}
+			if (i > 1) {
+				if (computed_map[i - 1][j + 1] != 0) {
+					if (computed_map[i - 1][j + 1] != 1) {
+						ofile << "," << std::endl;
+					}
+					ofile << "    $neibs(" << computed_map[i - 1][j + 1] << ",[" << computed_map[i - 1][j + 1];
+					if (computed_map[i - 2][j + 1] != 0) {
+						ofile << "," << computed_map[i - 2][j + 1];
+					}
+					if (computed_map[i - 1][j + 2] != 0) {
+						ofile << "," << computed_map[i - 1][j + 2];
+					}
+					if (computed_map[i][j + 1] != 0) {
+						ofile << "," << computed_map[i][j + 1];
+					}
+					if (computed_map[i - 1][j] != 0) {
+						ofile << "," << computed_map[i - 1][j];
+					}
+					ofile << "])";
+				}
+			}
+		}
+	}
+
+	ofile << std::endl;
+	ofile << "    ]," << std::endl;
+	ofile << "    As = [";
+
+	for (size_t i = 0; i < agents.size(); i++) {
+		if (i != 0) {
+			ofile << ",";
+		}
+		int asy = agents[i].first.first;
+		int asx = agents[i].first.second;
+		int aey = agents[i].second.first;
+		int aex = agents[i].second.second;
+		ofile << "(" << computed_map[asy][asx] << "," << computed_map[aey][aex] << ")";
+	}
+
+	ofile << "]," << std::endl;
+
+	return vertex_number;
+}
+
+/** Generates output from preprocessing.
+*
+* @param ofile output file stream for writing.
+* @param time makespan
+* @param number_of_vertices number of vertices in map
+*/
+void Map::make_preprocessed_output(std::ofstream& ofile, size_t time, size_t number_of_vertices) {
+
+	std::vector<size_t> seen_vertices;
+	size_t index = 0;
+
+	for (size_t a = 0; a < time_expanded_graph.size(); a++) {
+
+		seen_vertices.clear();
+		for (size_t t = 0; t < time; t++) {
+
+			if (t < time_expanded_graph[a].size()) {
+				std::vector<size_t> temp = std::move(seen_vertices);
+				std::merge(temp.begin(), temp.end(), time_expanded_graph[a][t].begin(), time_expanded_graph[a][t].end(), std::back_inserter(seen_vertices));
+			}
+				
+			index = 0;
+
+			for (size_t v = 1; v <= number_of_vertices; v++) {
+				if (v > seen_vertices.back() || v != seen_vertices[index]) {
+					ofile << "," << std::endl;
+					ofile << "    B[" << t + 1 << "," << a + 1 << "," << v << "] = 0";
+				}
+				else {
+					index++;
+				}
+			}
+		}
+	}
+
+}
+
+/** Generates input for picat without preprocessing.
+*
+* Generates from Map::computed_map.
+* 
+* @param output_file_name file for writing.
+* @return error message, "OK" if everything ended right.
+*/
+std::string Map::make_output_without_preprocessing(std::string output_file_name) {
 
 	std::ofstream ofile;
 	ofile.open(output_file_name);
 
 	if (ofile.is_open()) {
-		size_t vertex_number = 1;
 
 		ofile << "ins(Graph, As, Avoid, Makespan, SumOfCosts) =>" << std::endl;
-		ofile << "    Graph = [" << std::endl;
 
-		for (size_t i = 1; i <= height + 1; i++) {
-			for (size_t j = 0; j < width; j++) {
-				if (map[i][j + 1] != 0 && i != height + 1) {
-					map[i][j + 1] = vertex_number;
-					vertex_number++;
-				}
-				if (i > 1) {
-					if (map[i - 1][j + 1] != 0) {
-						if (map[i - 1][j + 1] != 1) {
-							ofile << "," << std::endl;
-						}
-						ofile << "    $neibs(" << map[i - 1][j + 1] << ",[" << map[i - 1][j + 1];
-						if (map[i - 2][j + 1] != 0) {
-							ofile << "," << map[i - 2][j + 1];
-						}
-						if (map[i - 1][j + 2] != 0) {
-							ofile << "," << map[i - 1][j + 2];
-						}
-						if (map[i][j + 1] != 0) {
-							ofile << "," << map[i][j + 1];
-						}
-						if (map[i - 1][j] != 0) {
-							ofile << "," << map[i - 1][j];
-						}
-						ofile << "])";
-					}
-				}
-			}
-		}
+		make_graph_and_agents_output(ofile);
 
-		ofile << std::endl;
-		ofile << "    ]," << std::endl;
-		ofile << "    As = [";
-
-		for (size_t i = 0; i < agents.size(); i++) {
-			if (i != 0) {
-				ofile << ",";
-			}
-			int asy = agents[i].first.first;
-			int asx = agents[i].first.second;
-			int aey = agents[i].second.first;
-			int aex = agents[i].second.second;
-			ofile << "(" << map[asy][asx] << "," << map[aey][aex] << ")";
-		}
-
-		ofile << "]," << std::endl;
 		ofile << "    Avoid = new_array(0,0)," << std::endl;
 		ofile << "    Makespan = -1," << std::endl;
-		ofile << "    SumOfCosts = -1." << std::endl;
+		ofile << "    SumOfCosts = -1.";
+	}
+	else {
+		return "ERROR: cannot open file for writing: " + output_file_name + "\n";
+	}
+
+	ofile.close();
+
+	return "OK";
+}
+
+/** Generates input for picat with preprocessing.
+* 
+* Generates from Map::computed_map, Map::time_expanded_graph and Map::agents_shortest_paths if time is default.
+*
+* @param output_file_name file for writing.
+* @param time default = longest of the shortest paths.
+* @return error message, "OK" if everything ended right.
+*/
+std::string Map::make_output(std::string output_file_name, size_t time) {
+
+	std::ofstream ofile;
+	ofile.open(output_file_name);
+
+	if (ofile.is_open()) {
+
+		if (time == 0) {
+			for (size_t i = 0; i < agents_shortest_paths.size(); i++) {
+				if (agents_shortest_paths[i].size() > time) {
+					time = agents_shortest_paths[i].size();
+				}
+			}
+		}
+
+		ofile << "ins(Graph, As, B) =>" << std::endl;
+
+		size_t number_of_vertices = make_graph_and_agents_output(ofile);
+
+		ofile << "    B = new_array(" << time << "," << agents.size() << "," << number_of_vertices << ")";
+
+		make_preprocessed_output(ofile, time, number_of_vertices);
+
+		ofile << ".";
 	}
 	else {
 		return "ERROR: cannot open file for writing: " + output_file_name + "\n";

@@ -14,6 +14,10 @@
  *  Can generate input for picat.
  */
 class Map {
+
+    size_t make_graph_and_agents_output(std::ofstream& ofile);
+    void make_preprocessed_output(std::ofstream& ofile, size_t time, size_t number_of_vertices);
+
 public:
     const size_t height_number_index = 7;
     const size_t width_number_index = 6;
@@ -43,7 +47,8 @@ public:
     std::string load_map(std::string custom_map_file_name = "");
     std::string load_agents(std::string custom_agents_file_name = "");
     std::string reload();
-    std::string make_output_without_preprocesing(std::string output_file_name, std::vector<std::vector<size_t>>& map);
+    std::string make_output_without_preprocessing(std::string output_file_name);
+    std::string make_output(std::string output_file_name, size_t time = 0);
     
     void reset_computed_map();
 };

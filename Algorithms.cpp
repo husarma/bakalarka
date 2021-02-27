@@ -117,7 +117,7 @@ void bubble(std::vector<std::vector<size_t>>& reference_map, std::vector<std::ve
 * @param reference_map original input map.
 * @param map_output map for result writing.
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 	
@@ -207,7 +207,7 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 * @param reference_map original input map.
 * @param output_paths vector for writing the result for agents.
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
@@ -294,7 +294,7 @@ std::string map_intersection(std::vector<std::vector<size_t>>& map1, std::vector
 * @param reference_map original input map.
 * @param map_to_expand map to be expanded.
 * @param map_output map for result writing, can be the same as expanded map.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_expand, std::vector<std::vector<size_t>>& map_output) {
 	
@@ -390,14 +390,12 @@ void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 *
 * Uses BFS algorithm.
 *
-* @param input_map reference map.
+* @param input_map must be correctly numbered.
 * @param output_time_expanded_draph vector for writing the result for agent.
 * @param index_in_output index in output_time_expanded_draph to write result.
 * @param agent pair containig agent's start and finish coordinates in pair.
 */
 void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
-	
-	give_new_numbering(input_map);
 	
 	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
 
@@ -461,7 +459,7 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 * @param input_map reference map.
 * @param output_time_expanded_draph vector for writing the result for agents.
 * @param agents vector of pairs containig agent's start and finish coordinates in pair.
-* @return error message, "OK" if everything ended well.
+* @return error message, "OK" if everything ended right.
 */
 std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
 
@@ -470,6 +468,8 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map
 	}
 
 	std::vector<std::thread> threads;
+
+	give_new_numbering(input_map);
 
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {

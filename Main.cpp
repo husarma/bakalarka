@@ -3,9 +3,9 @@
 int main(int argc, char** argv) {
 
 
-    Map mapa1 = Map("map.txt", "agenti.txt");
+    Map mapa1 = Map("skuskam.txt", "skuskaa.txt");
     mapa1.reload();
-    mapa1.make_output_without_preprocesing("outputRoom.txt", mapa1.map);
+    /*
     map_dump(mapa1.map, "output_dump.txt");
 
     mapa1.reset_computed_map();
@@ -22,9 +22,21 @@ int main(int argc, char** argv) {
 
     time_expanded_multiagent(mapa1.computed_map, mapa1.time_expanded_graph, mapa1.agents);
 
+    mapa1.make_output("outputRoom.txt");
+
     auto a = are_paths_separate(mapa1.agents_shortest_paths);
     
     map_dump(mapa1.computed_map, "output_dump.txt");
+
+    */
+
+    mapa1.computed_map = mapa1.map;
+
+    shortest_path_multiagent(mapa1.map, mapa1.agents_shortest_paths, mapa1.agents);
+    time_expanded_multiagent(mapa1.computed_map, mapa1.time_expanded_graph, mapa1.agents);
+
+    mapa1.make_output("outputRoom.txt");
+
 
 
     return 0;

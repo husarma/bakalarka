@@ -3,10 +3,10 @@
 ✔	15:54 17. 2. 2021 rozdelenie nacitania a vypisu z rocnikoveho projektu a vytvorenie datovej struktury 2D mapy s ktorou budem robit orezavanie a z nej sa bude robit vypis pre picat 
 ✔	16:10 17. 2. 2021 rozdelenie nacitania na samostatne load_map a load_agents a pridanie funkcie reload a pridanie error hlasok
 ✔	17:00 17. 2. 2021 vytvorenie debug funkcie map_dump, ktora bude vypisovat do konzole alebo do zadaneho suboru stav mapy
-✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy, casovo expandovany graf
-✔	23:55 18. 2. 2021 podpora multithreadingu pre casovo expandovany graf - pre kazdeho agenta jedno vlakno
-✔	13:51 19. 2. 2021 zrychlenie funkcie casovo expandovany graf
-✔	16:49 19. 2. 2021 opravenie memory bug v casovo expandovany graf
+✔	22:29 17. 2. 2021 prehladavanie grafu pomocou BFS pre kazdeho agenta start->ciel a ciel->start a urobenie zjednotenia pouzitych vrcholov a nasledne odstranenie nepotrebnych vrcholov z mapy, bubliny
+✔	23:55 18. 2. 2021 podpora multithreadingu pre bubliny - pre kazdeho agenta jedno vlakno
+✔	13:51 19. 2. 2021 zrychlenie funkcie bubliny
+✔	16:49 19. 2. 2021 opravenie memory bug v bubliny
 ✔	20:52 19. 2. 2021 podpora zjednotenia volnych vrcholov map, podpora prieniku volnych vrcholov map
 ✔	20:54 19. 2. 2021 hladanie najkratsej cesty pre agenta
 ✔	20:55 19. 2. 2021 podpora multithreadingu pre hladanie najratsich ciet jednotlivych agentov
@@ -17,8 +17,8 @@
 ✔	22:25 19. 2. 2021 okomentovanie hlaviciek funkcii
 ✔	15:27 20. 2. 2021 pridavanie volnych vrcholov okolo existujucich
 2. odlahcenie picatu o predprocesing
-	14:41 25. 2. 2021 vypisovanie vrcholov pre kazdeho agenta a cas v ktorych sa nemoze nachadzat (vyuzitie time expanded graphu)
-	14:42 25. 2. 2021 vypisovanie casu v ktorom sa to ma picat pokusit vyriesit
+✔	14:41 25. 2. 2021 vypisovanie vrcholov pre kazdeho agenta a cas v ktorych sa nemoze nachadzat (vyuzitie time expanded graphu)
+✔	14:42 25. 2. 2021 vypisovanie casu v ktorom sa to ma picat pokusit vyriesit
 	14:43 25. 2. 2021 rozchodit zavolanie picatu
 	14:44 25. 2. 2021 skusanie experimentov, bubliny vs nakradsia cesta s k
 	15:02 25. 2. 2021 napisanie priblizneho obsahu prace s kratkymi popiskami
