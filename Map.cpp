@@ -149,7 +149,8 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 	agents_file.close();
 
 	agents_shortest_paths.resize(agents.size());
-	time_expanded_graph.resize(agents.size());
+	time_expanded_graph.first.resize(agents.size());
+	time_expanded_graph.second.resize(agents.size());
 
 	return "OK";
 }
@@ -248,23 +249,31 @@ size_t Map::make_graph_and_agents_output(std::ofstream& ofile) {
 */
 void Map::make_preprocessed_output(std::ofstream& ofile, size_t time, size_t number_of_vertices) {
 
-	std::vector<size_t> seen_vertices;
+	std::vector<size_t> intersection;
+	std::vector<size_t> temp;
+
 	size_t index = 0;
 
-	for (size_t a = 0; a < time_expanded_graph.size(); a++) {
+	for (size_t a = 0; a < time_expanded_graph.first.size(); a++) {
 
-		seen_vertices.clear();
+		intersection.clear();
+
 		for (size_t t = 0; t < time; t++) {
 
-			if (t < time_expanded_graph[a].size()) {
-				std::vector<size_t> temp = std::move(seen_vertices);
-				std::merge(temp.begin(), temp.end(), time_expanded_graph[a][t].begin(), time_expanded_graph[a][t].end(), std::back_inserter(seen_vertices));
+			//merge with new vertices
+			temp = std::move(intersection);
+			std::merge(temp.begin(), temp.end(), time_expanded_graph.first[a][t].begin(), time_expanded_graph.first[a][t].end(), std::back_inserter(intersection));
+
+			//cut vertices whitch is too far from finish considering the left time
+			if (t > 0) { //in time 0 cutabble vertices doesn't exist
+				temp = std::move(intersection);
+				std::set_difference(temp.begin(), temp.end(), time_expanded_graph.second[a][time - t].begin(), time_expanded_graph.second[a][time - t].end(), std::back_inserter(intersection));
 			}
 				
 			index = 0;
 
 			for (size_t v = 1; v <= number_of_vertices; v++) {
-				if (v > seen_vertices.back() || v != seen_vertices[index]) {
+				if (v > intersection.back() || v != intersection[index]) {
 					ofile << "," << std::endl;
 					ofile << "    B[" << t + 1 << "," << a + 1 << "," << v << "] = 0";
 				}
@@ -313,23 +322,17 @@ std::string Map::make_output_without_preprocessing(std::string output_file_name)
 * Generates from Map::computed_map, Map::time_expanded_graph and Map::agents_shortest_paths if time is default.
 *
 * @param output_file_name file for writing.
-* @param time default = longest of the shortest paths.
 * @return error message, "OK" if everything ended right.
 */
-std::string Map::make_output(std::string output_file_name, size_t time) {
+std::string Map::make_output(std::string output_file_name) {
 
 	std::ofstream ofile;
+	size_t time;
 	ofile.open(output_file_name);
 
 	if (ofile.is_open()) {
 
-		if (time == 0) {
-			for (size_t i = 0; i < agents_shortest_paths.size(); i++) {
-				if (agents_shortest_paths[i].size() > time) {
-					time = agents_shortest_paths[i].size();
-				}
-			}
-		}
+		time = time_expanded_graph.first[0].size();
 
 		ofile << "ins(Graph, As, B) =>" << std::endl;
 

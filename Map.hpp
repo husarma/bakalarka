@@ -35,8 +35,8 @@ public:
 
     std::vector<std::vector<std::pair<size_t, size_t>>> agents_shortest_paths;
 
-    //   agent       time        new vertices added in this time
-    std::vector<std::vector<std::vector<size_t>>> time_expanded_graph;
+    //first in pair is time expanded graph from start of the agent and the second is from the finish
+    std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>> time_expanded_graph;
 
     Map();
     Map(std::string map_file_name, std::string agents_file_name);
@@ -48,7 +48,7 @@ public:
     std::string load_agents(std::string custom_agents_file_name = "");
     std::string reload();
     std::string make_output_without_preprocessing(std::string output_file_name);
-    std::string make_output(std::string output_file_name, size_t time = 0);
+    std::string make_output(std::string output_file_name);
     
     void reset_computed_map();
 };

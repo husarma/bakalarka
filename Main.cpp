@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     mapa1.computed_map = mapa1.map;
 
     shortest_path_multiagent(mapa1.map, mapa1.agents_shortest_paths, mapa1.agents);
-    time_expanded_multiagent(mapa1.computed_map, mapa1.time_expanded_graph, mapa1.agents);
+    time_expanded_multiagent(mapa1.computed_map, mapa1.time_expanded_graph, mapa1.agents, 8);
 
     mapa1.make_output("outputRoom.txt");
 

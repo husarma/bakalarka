@@ -393,9 +393,10 @@ void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 * @param input_map must be correctly numbered.
 * @param output_time_expanded_draph vector for writing the result for agent.
 * @param index_in_output index in output_time_expanded_draph to write result.
-* @param agent pair containig agent's start and finish coordinates in pair.
+* @param agent pair containig agent's start.
+* @param time makespan for time expanded graph.
 */
-void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<int, int> agent, size_t time) {
 	
 	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
 
@@ -403,12 +404,12 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 
 	std::vector<size_t> new_vertices_in_time;
 
-	bool found = false;
-	vertex_queue.push(agent.first);
-	temp_map[agent.first.first][agent.first.second] = 1;
-	new_vertices_in_time.push_back(input_map[agent.first.first][agent.first.second]);
+	size_t t = 0;
+	vertex_queue.push(agent);
+	temp_map[agent.first][agent.second] = 1;
+	new_vertices_in_time.push_back(input_map[agent.first][agent.second]);
 
-	while (!(found || vertex_queue.empty())) {
+	while (t < time && !vertex_queue.empty()) {
 
 		//push lap delimiter
 		vertex_queue.push(std::make_pair(0, 0));
@@ -420,10 +421,6 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 		while (vertex_queue.front().first != 0) {
 			std::pair<size_t, size_t> a = vertex_queue.front();
 			vertex_queue.pop();
-
-			if (a.first == agent.second.first && a.second == agent.second.second) {
-				found = true;
-			}
 
 			if (input_map[a.first - 1][a.second] != 0 && temp_map[a.first - 1][a.second] != 1) {
 				temp_map[a.first - 1][a.second] = 1;
@@ -449,6 +446,12 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 
 		//pop lap delimiter
 		vertex_queue.pop();
+		t++;
+	}
+
+	while (t < time) {
+		output_time_expanded_draph[index_in_output].push_back(std::vector<size_t>());
+		t++;
 	}
 }
 
@@ -457,13 +460,15 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 * Multithreading is used for computing.
 *
 * @param input_map reference map.
-* @param output_time_expanded_draph vector for writing the result for agents.
+* @param output_time_expanded_draph pair of vectors for writing the result for agents.
 * @param agents vector of pairs containig agent's start and finish coordinates in pair.
+* @param time makespan for time expanded graph.
 * @return error message, "OK" if everything ended right.
 */
-std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents, size_t time) {
 
-	if (output_time_expanded_draph.size() != agents.size()) {
+	if (output_time_expanded_draph.first.size() != agents.size() || 
+		output_time_expanded_draph.second.size() != agents.size()) {
 		return "ERROR: different lenghts of time_expanded and agents\n";
 	}
 
@@ -473,7 +478,8 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map
 
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {
-		threads.push_back(std::thread(time_expanded, std::ref(input_map), std::ref(output_time_expanded_draph), i, agents[i]));
+		threads.push_back(std::thread(time_expanded, std::ref(input_map), std::ref(output_time_expanded_draph.first), i, agents[i].first, time));
+		threads.push_back(std::thread(time_expanded, std::ref(input_map), std::ref(output_time_expanded_draph.second), i, agents[i].second, time));
 	}
 
 	//Join the threads with the main thread
