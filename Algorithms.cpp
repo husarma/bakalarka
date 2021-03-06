@@ -476,6 +476,13 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map
 
 	give_new_numbering(input_map);
 
+	/*
+	for (size_t i = 0; i < agents.size(); i++) {
+		time_expanded(std::ref(input_map), std::ref(output_time_expanded_draph.first), i, agents[i].first, time);
+		time_expanded(std::ref(input_map), std::ref(output_time_expanded_draph.second), i, agents[i].second, time);
+	}
+	*/
+
 	//Launch threads
 	for (size_t i = 0; i < agents.size(); i++) {
 		threads.push_back(std::thread(time_expanded, std::ref(input_map), std::ref(output_time_expanded_draph.first), i, agents[i].first, time));

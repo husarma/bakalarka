@@ -49,6 +49,10 @@ public:
     std::string reload();
     std::string make_output_without_preprocessing(std::string output_file_name);
     std::string make_output(std::string output_file_name);
+
+    void picat();
+
+    size_t get_min_time();
     
     void reset_computed_map();
 };

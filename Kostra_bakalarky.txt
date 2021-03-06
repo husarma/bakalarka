@@ -1,0 +1,9 @@
+Definicie/MAPF - popisanie zakladnych definic a problemu MAPF
+Picat 
+  O programe - popisanie programovacieho jazyka
+  Prevednie problemu na SAT - prevedenie problemu MAPF na SAT a vyuzitie picatu na riesenie
+Problem orezavania grafu
+  Navrhy riesenia - skusane moznosti orezavania
+  Implementacia - ako som to naprogramoval (datove struktury, zlozitosti)
+Prezentovanie vysledkov - krafy, zrychlenia, optimalnost
+Zaver - zaver z celej prace

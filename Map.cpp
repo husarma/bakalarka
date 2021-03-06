@@ -134,7 +134,7 @@ std::string Map::load_agents(std::string custom_agents_file_name) {
 				}
 			}
 
-		agents.push_back(std::make_pair(std::make_pair(asy, asx), std::make_pair(aey, aex)));
+		agents.push_back(std::make_pair(std::make_pair(asy + 1, asx + 1), std::make_pair(aey + 1, aex + 1)));
 		}
 	}
 	else {
@@ -319,7 +319,7 @@ std::string Map::make_output_without_preprocessing(std::string output_file_name)
 
 /** Generates input for picat with preprocessing.
 * 
-* Generates from Map::computed_map, Map::time_expanded_graph and Map::agents_shortest_paths if time is default.
+* Generates from Map::computed_map, Map::time_expanded_graph.
 *
 * @param output_file_name file for writing.
 * @return error message, "OK" if everything ended right.
@@ -351,6 +351,39 @@ std::string Map::make_output(std::string output_file_name) {
 	ofile.close();
 
 	return "OK";
+}
+
+/** Prepare input and output files for picat and call him for solving.*/
+void Map::picat() {
+
+	std::string relative_dir_wind = "Vystupy\\";
+	std::string relative_dir_unix = "Vystupy/";
+	std::string file_name = map_file_name.substr(0, map_file_name.size() - 4) + "_" + agents_file_name.substr(0, agents_file_name.size() - 4) + "_" + std::to_string(time_expanded_graph.first[0].size());
+	std::string picat_input = file_name + "_in.pi";
+	std::string picat_output = file_name + "_out.pi";
+
+	make_output(relative_dir_wind + picat_input);
+
+	std::stringstream exec;
+	exec << "bash -c \"./picat mks.pi " << relative_dir_unix + picat_input << " > " << relative_dir_unix + picat_output << "\"";
+	auto x = exec.str();
+	system(x.c_str());
+}
+
+/** Computes minimal required time for agents to complete its paths.
+*
+* Computes from Map::agents_shortest_paths.
+*
+* @return lenght of the logest from the shortest paths.
+*/
+size_t Map::get_min_time() {
+	size_t max = 0;
+	for (size_t a = 0; a < agents_shortest_paths.size(); a++) {
+		if (agents_shortest_paths[a].size() > max) {
+			max = agents_shortest_paths[a].size();
+		}
+	}
+	return max;
 }
 
 /** Zeroes computed map and mirrors sizes of loaded map.*/
