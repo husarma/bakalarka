@@ -31,7 +31,7 @@ public:
     std::vector<std::vector<size_t>> map;
     std::vector<std::vector<size_t>> computed_map;
     //agent is defined by coordinates of his start pint and finish point
-    std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> agents;
+    std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>> agents;
 
     std::vector<std::vector<std::pair<size_t, size_t>>> agents_shortest_paths;
 
@@ -50,7 +50,7 @@ public:
     std::string make_output_without_preprocessing(std::string output_file_name);
     std::string make_output(std::string output_file_name);
 
-    void picat();
+    std::string picat();
 
     size_t get_min_time();
     

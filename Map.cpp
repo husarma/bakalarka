@@ -229,10 +229,10 @@ size_t Map::make_graph_and_agents_output(std::ofstream& ofile) {
 		if (i != 0) {
 			ofile << ",";
 		}
-		int asy = agents[i].first.first;
-		int asx = agents[i].first.second;
-		int aey = agents[i].second.first;
-		int aex = agents[i].second.second;
+		size_t asy = agents[i].first.first;
+		size_t asx = agents[i].first.second;
+		size_t aey = agents[i].second.first;
+		size_t aex = agents[i].second.second;
 		ofile << "(" << computed_map[asy][asx] << "," << computed_map[aey][aex] << ")";
 	}
 
@@ -354,7 +354,7 @@ std::string Map::make_output(std::string output_file_name) {
 }
 
 /** Prepare input and output files for picat and call him for solving.*/
-void Map::picat() {
+std::string Map::picat() {
 
 	std::string relative_dir_wind = "Vystupy\\";
 	std::string relative_dir_unix = "Vystupy/";
@@ -368,6 +368,32 @@ void Map::picat() {
 	exec << "bash -c \"./picat mks.pi " << relative_dir_unix + picat_input << " > " << relative_dir_unix + picat_output << "\"";
 	auto x = exec.str();
 	system(x.c_str());
+
+	//reading output
+	std::ifstream picat_result;
+	picat_result.open(relative_dir_wind + picat_output);
+
+	if (picat_result.is_open()) {
+
+		std::string line;
+		size_t line_number = 0;
+		while (std::getline(picat_result, line)) {
+			line_number++;
+			if (line_number == 4) {
+				if (line == "agents | timesteps") {
+					return "OK";
+				}
+				else {
+					return "NO solution";
+				}
+			}
+		}
+
+		return "NO solution";
+	}
+	else {
+		return "ERROR: cannot open file for reading result: " + relative_dir_wind + picat_output + "\n";
+	}
 }
 
 /** Computes minimal required time for agents to complete its paths.

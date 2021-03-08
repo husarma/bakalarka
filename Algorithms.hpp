@@ -5,11 +5,11 @@
 #include <queue>
 #include <thread>
 
-void bubble(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent);
-std::string bubble_multiagent(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents);
+void bubble(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> agent);
+std::string bubble_multiagent(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents);
 
-void shortest_path(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent);
-std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents);
+void shortest_path(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> agent);
+std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& referenece_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents);
 
 void paths_to_map(std::vector<std::vector<std::pair<size_t, size_t>>>& input_paths, std::vector<std::vector<size_t>>& map_output);
 
@@ -22,5 +22,5 @@ bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& inp
 
 void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber);
 
-void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<int, int> agent, size_t time);
-std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents, size_t time);
+void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<size_t, size_t> agent, size_t time);
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t time);

@@ -11,7 +11,7 @@
 * @param map_output map for result writing.
 * @param agent pair containig agents start and finish coordinates in pair.
 */
-void bubble(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void bubble(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> agent) {
 
 	std::vector<std::vector<size_t>> temp_map(reference_map.size(), std::vector<size_t>(reference_map[0].size(), 0));
 
@@ -119,7 +119,7 @@ void bubble(std::vector<std::vector<size_t>>& reference_map, std::vector<std::ve
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_output, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
 	
 	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size()) {
 		return "ERROR: different lenghts of maps in union\n";
@@ -149,7 +149,7 @@ std::string bubble_multiagent(std::vector<std::vector<size_t>>& reference_map, s
 * @param index_in_output index in output_paths to write result.
 * @param agent pair containig agent's start and finish coordinates in pair.
 */
-void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<int, int>, std::pair<int, int>> agent) {
+void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, size_t index_in_output, std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> agent) {
 	
 	std::vector<std::vector<std::pair<size_t, size_t>>> temp_map(reference_map.size(), std::vector<std::pair<size_t, size_t>>(reference_map[0].size(), std::make_pair(0, 0)));
 
@@ -209,7 +209,7 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents) {
+std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
 
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
@@ -225,6 +225,13 @@ std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference
 	//Join the threads with the main thread
 	for (auto& thread : threads) {
 		thread.join();
+	}
+
+	//check if each agent found his finis
+	for (size_t a = 0; a < agents.size(); a++) {
+		if (output_paths[a].size() == 0) {
+			return "ERROR: some agents can't get to finish";
+		}
 	}
 
 	return "OK";
@@ -396,7 +403,7 @@ void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 * @param agent pair containig agent's start.
 * @param time makespan for time expanded graph.
 */
-void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<int, int> agent, size_t time) {
+void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std::vector<std::vector<size_t>>>& output_time_expanded_draph, size_t index_in_output, std::pair<size_t, size_t> agent, size_t time) {
 	
 	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
 
@@ -465,7 +472,7 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 * @param time makespan for time expanded graph.
 * @return error message, "OK" if everything ended right.
 */
-std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>>& agents, size_t time) {
+std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map, std::pair<std::vector<std::vector<std::vector<size_t>>>, std::vector<std::vector<std::vector<size_t>>>>& output_time_expanded_draph, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t time) {
 
 	if (output_time_expanded_draph.first.size() != agents.size() || 
 		output_time_expanded_draph.second.size() != agents.size()) {
