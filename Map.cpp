@@ -353,7 +353,12 @@ std::string Map::make_output(std::string output_file_name) {
 	return "OK";
 }
 
-/** Prepare input and output files for picat and call him for solving.*/
+/** Call Picat.
+* 
+* Prepare input and output files for picat and call him for solving, then analyze output.
+* 
+* @return error message, "OK" if that instance have solution.
+*/
 std::string Map::picat() {
 
 	std::string relative_dir_wind = "Vystupy\\";

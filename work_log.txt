@@ -30,4 +30,4 @@
 ✔	15:41 5. 3. 2021  opravenie vypisu na opraveny preprocessing
 ✔	20:36 6. 3. 2021  citanie vystupu z picatu
 ✔	20:18 8. 3. 2021  prepisanie kostry prace do latexu a vyplnenie zakladnych udajov
-	17:01 9. 3. 2021  opravit a doplnit komentare k funkciam
+✔	17:01 9. 3. 2021  opravit a doplnit komentare k funkciam
