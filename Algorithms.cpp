@@ -202,6 +202,7 @@ void shortest_path(std::vector<std::vector<size_t>>& reference_map, std::vector<
 
 /** Computes the shortest path in graph for group of agents.
 *
+* Master/Slave design pattern.
 * Multithreading is used for computing.
 *
 * @param reference_map original input map.
@@ -214,6 +215,9 @@ std::string shortest_path_multiagent(std::vector<std::vector<size_t>>& reference
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
+
+	output_paths.clear();
+	output_paths.resize(agents.size());
 
 	std::vector<std::thread> threads;
 
@@ -301,14 +305,14 @@ std::string map_intersection(std::vector<std::vector<size_t>>& map1, std::vector
 * @param reference_map original input map.
 * @param map_to_expand map to be expanded.
 * @param map_output map for result writing, can be the same as expanded map.
-* @return error message, "OK" if everything ended right.
+* @return error message, "OK" if everything ended right and true if expanded in pair.
 */
-std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_expand, std::vector<std::vector<size_t>>& map_output) {
+std::pair<std::string, bool> expand_map(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<size_t>>& map_to_expand, std::vector<std::vector<size_t>>& map_output) {
 	
 	if (reference_map.size() != map_output.size() || reference_map[0].size() != map_output[0].size() ||
 		map_to_expand.size() != map_output.size() || map_to_expand[0].size() != map_output[0].size() ||
 		reference_map.size() != map_to_expand.size() || reference_map[0].size() != map_to_expand[0].size()) {
-		return "ERROR: different lenghts of maps in surroundings\n";
+		return std::make_pair("ERROR: different lenghts of maps in surroundings\n", false);
 	}
 
 	bool same = false;
@@ -317,6 +321,8 @@ std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vec
 		same = true;
 		copy = map_to_expand;
 	}
+
+	bool expanded = false;
 
 	bool surround = false;
 	for (size_t i = 0; i < reference_map.size(); i++) {
@@ -333,15 +339,27 @@ std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vec
 
 			if (surround) {
 				if (reference_map[i - 1][j] != 0) {
+					if (!map_output[i - 1][j]) {
+						expanded = true;
+					}
 					map_output[i - 1][j] = 1;
 				}
 				if (reference_map[i][j + 1] != 0) {
+					if (!map_output[i][j + 1]) {
+						expanded = true;
+					}
 					map_output[i][j + 1] = 1;
 				}
 				if (reference_map[i + 1][j] != 0) {
+					if (!map_output[i + 1][j]) {
+						expanded = true;
+					}
 					map_output[i + 1][j] = 1;
 				}
 				if (reference_map[i][j - 1] != 0) {
+					if (!map_output[i][j - 1]) {
+						expanded = true;
+					}
 					map_output[i][j - 1] = 1;
 				}
 
@@ -350,7 +368,14 @@ std::string expand_map(std::vector<std::vector<size_t>>& reference_map, std::vec
 		}
 	}
 
-	return "OK";
+	if (expanded) {
+		return std::make_pair("OK", true);
+	}
+	else {
+		return std::make_pair("OK", false);
+	}
+
+	
 }
 
 /** Writes paths to map.
@@ -380,7 +405,7 @@ bool are_paths_separate(std::vector<std::vector<std::pair<size_t, size_t>>>& inp
 *
 * @param map_to_renumber map to be renumbered.
 */
-void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
+size_t give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 
 	size_t vertex_number = 1;
 	for (size_t i = 0; i < map_to_renumber.size(); i++) {
@@ -391,6 +416,8 @@ void give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 			}
 		}
 	}
+
+	return vertex_number - 1;
 }
 
 /** Computes time expanded graph for one agent.
@@ -464,6 +491,7 @@ void time_expanded(std::vector<std::vector<size_t>>& input_map, std::vector<std:
 
 /** Computes time expanded graph for group of agents.
 *
+* Master/Slave design pattern.
 * Multithreading is used for computing.
 *
 * @param input_map reference map.
@@ -478,6 +506,12 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map
 		output_time_expanded_draph.second.size() != agents.size()) {
 		return "ERROR: different lenghts of time_expanded and agents\n";
 	}
+
+	output_time_expanded_draph.first.clear();
+	output_time_expanded_draph.second.clear();
+
+	output_time_expanded_draph.first.resize(agents.size());
+	output_time_expanded_draph.second.resize(agents.size());
 
 	std::vector<std::thread> threads;
 
@@ -499,6 +533,95 @@ std::string time_expanded_multiagent(std::vector<std::vector<size_t>>& input_map
 	//Join the threads with the main thread
 	for (auto& thread : threads) {
 		thread.join();
+	}
+
+	return "OK";
+}
+
+/** Generate files containing instances for given map.
+*
+* @param input_map map to generate for.
+* @param map_name name of map.
+* @param output_dir path to directory for outputing generated instances.
+* @param number_of_instances number of generated instances.
+* @param agents_in_instance number of agents in one instance.
+* @return error message, "OK" if everything ended right.
+*/
+std::string generate_agents_for_map(std::vector<std::vector<size_t>>& input_map, std::string map_name , std::string output_dir, size_t number_of_instances, size_t agents_in_instance) {
+
+	std::string::size_type const map_dot(map_name.find_last_of('.'));
+
+	std::string clear_map_name = map_name.substr(0, map_dot);
+
+	std::vector<std::pair<size_t, size_t>> agent_start;
+	std::vector<std::pair<size_t, size_t>> agent_goal;
+
+	for (size_t i = 0; i < number_of_instances; i++) {
+
+		agent_start.clear();
+		agent_goal.clear();
+
+		std::ofstream ofile;
+		ofile.open(output_dir + "\\" + clear_map_name + "-even-" + std::to_string(i + 1) + ".scen");
+
+		if (ofile.is_open()) {
+
+			ofile << "version 1" << std::endl;
+
+			for (size_t j = 0; j < agents_in_instance; j++) {
+				size_t s_x;
+				size_t s_y;
+				size_t g_x;
+				size_t g_y;
+				bool finded = false;
+
+				while (!finded) {
+					s_x = (std::rand() % (input_map[0].size() - 2)) + 1;
+					s_y = (std::rand() % (input_map[0].size() - 2)) + 1;
+
+
+					if ((agent_start.end() == std::find(agent_start.begin(), agent_start.end(), std::make_pair(s_x, s_y))) && (input_map[s_x][s_y] != 0)) { //if not allready used and is free in map
+
+						agent_start.push_back(std::make_pair(s_x, s_y));
+
+						while (!finded) {
+							g_x = (std::rand() % (input_map[0].size() - 2)) + 1;
+							g_y = (std::rand() % (input_map[0].size() - 2)) + 1;
+
+
+							if ((agent_goal.end() == std::find(agent_goal.begin(), agent_goal.end(), std::make_pair(g_x, g_y))) && (input_map[g_x][g_y] != 0)) { //if not allready used and is free in map
+								
+								agent_goal.push_back(std::make_pair(g_x, g_y));
+								finded = true;
+							}
+						}
+					}
+				}
+
+				ofile << 
+					"0\t" 
+					+ map_name + 
+					"\t" 
+					+ std::to_string(input_map[0].size() - 2) + 
+					"\t" 
+					+ std::to_string(input_map[0].size() - 2) + 
+					"\t" 
+					+ std::to_string(s_y - 1) + 
+					"\t" 
+					+ std::to_string(s_x - 1) + 
+					"\t" 
+					+ std::to_string(g_y - 1) + 
+					"\t" 
+					+ std::to_string(g_x - 1) + 
+					"\t0" << std::endl;
+			}
+
+		}
+		else {
+			return "ERROR: cannot open file for writing agents instance : " + output_dir + "\\" + clear_map_name + "-even-" + std::to_string(i) + "\n";
+		}
+
+		ofile.close();
 	}
 
 	return "OK";
